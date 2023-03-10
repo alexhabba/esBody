@@ -1,0 +1,127 @@
+openapi: 3.0.2
+info:
+  description: Api Documentation for legalpost
+  version: '1.2'
+  title: Api Documentation
+  contact: {}
+servers:
+  - url: "http://localhost:8888"
+tags:
+  - name: UserAuth
+    description: UserAuth
+
+paths:
+  /api/user/login:
+    post:
+      description: описание
+      tags:
+        - UserAuth
+      summary: Запрос проверки входящего платежа
+      operationId: authorizationUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDto'
+      responses:
+        200:
+          description: описание
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTokenDto'
+        500:
+          description: описание
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      deprecated: false
+
+  /api/user/registration:
+    post:
+      description: описание
+      tags:
+        - UserAuth
+      summary: Запрос проверки входящего платежа
+      operationId: registrationUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDto'
+      responses:
+        200:
+          description: описание
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTokenDto'
+        500:
+          description: описание
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResult'
+      deprecated: false
+
+
+components:
+  schemas:
+    UserRequestDto:
+      description: UserRequestDto
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    UserTokenDto:
+      description: UserRequestDto
+      type: object
+      properties:
+        token:
+          type: string
+#          добавить список ролей
+#        roles:
+
+    Role:
+      type: string
+      enum:
+        - USER
+        - ADMIN
+        - MANAGER
+
+    ResultDto:
+      title: ResultDto
+      type: object
+      properties:
+        timestamp:
+          type: string
+          example: 2021-10-20T12:11:39.488+0000
+          description: Время и дата запроса
+        code:
+          type: string
+          example: QRPT.00000
+          description: Код сервиса
+        message:
+          type: string
+          example: OK (удачный ответ) ЮЛ найдено
+          description: Системное сообщение об ошибке
+        status:
+          type: integer
+          minLength: 3
+          maxLength: 3
+          example: 500
+          description: Код
+
+    ErrorResult:
+      title: ErrorResult
+      description: Ошибка
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/ResultDto'

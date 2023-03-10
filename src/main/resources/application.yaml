@@ -1,0 +1,39 @@
+server:
+  port: 8888
+
+spring:
+  flyway:
+    locations: classpath:db/migration
+    schemas: market
+    enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: false
+    database: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=market
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: alexhabba112@gmail.com
+    password: fqxkrnswggtldeki
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  token:
+    secret: jwtappdemo
+    expired: 5000
+
+logging:
+  level:
+    root: info
