@@ -100,7 +100,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     List<Student> students = studentRepository.findAll().stream()
                             .filter(student -> student.getPhone() != null &&
                                     Arrays.stream(student.getPhone().split(", "))
-                                            .peek(System.out::println)
+//                                            .peek(System.out::println)
                                                     .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
                             .collect(Collectors.toList());
 
