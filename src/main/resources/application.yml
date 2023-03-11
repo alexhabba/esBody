@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+bot:
+  name: LogicaScol
+  token: 5594650440:AAFbqVQvSmHwL2SCtDrkw5gQePfMRJCWahw
+  owner: 1
+
+cron:
+  scheduler: 0-59 * * * * *
+
+server:
+  port: 8082
