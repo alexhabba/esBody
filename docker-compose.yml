@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  psql:
+    image: 'postgres:13.3'
+    container_name: 'postgres-logics-school'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - application-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: Logics-school
+    ports:
+      - "8080:8080"
+    restart: "no"
+    depends_on:
+      - psql
+    environment:
+      RDS_HOSTNAME: psql
+      RDS_PORT: 5432
+      RDS_DB_NAME: postgres
+      RDS_USERNAME: postgres
+      RDS_PASSWORD: postgres
+    networks:
+      - application-network
+
+networks:
+  application-network:

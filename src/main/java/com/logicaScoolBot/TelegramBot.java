@@ -1,16 +1,13 @@
 package com.logicaScoolBot;
 
 import com.logicaScoolBot.config.BotConfig;
-import com.logicaScoolBot.entity.Ads;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
-import com.logicaScoolBot.repository.AdsRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -27,18 +24,22 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.Timestamp;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     private final UserRepository userRepository;
-    private final AdsRepository adsRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
 
@@ -53,23 +54,27 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     static final String ERROR_TEXT = "Error occurred: ";
 
-//    public TelegramBot(BotConfig config, UserRepository userRepository, AdsRepository adsRepository) {
-//        this.config = config;
-//        this.adsRepository = adsRepository;
-//        this.userRepository = userRepository;
-//
-//        List<BotCommand> listofCommands = new ArrayList<>();
-//        listofCommands.add(new BotCommand("/start", "get a welcome message"));
-//        listofCommands.add(new BotCommand("/mydata", "get your data stored"));
-//        listofCommands.add(new BotCommand("/deletedata", "delete my data"));
-//        listofCommands.add(new BotCommand("/help", "info how to use this bot"));
-//        listofCommands.add(new BotCommand("/settings", "set your preferences"));
-//        try {
-//            this.execute(new SetMyCommands(listofCommands, new BotCommandScopeDefault(), null));
-//        } catch (TelegramApiException e) {
-//            log.error("Error setting bot's command list: " + e.getMessage());
-//        }
-//    }
+    public TelegramBot(BotConfig config, UserRepository userRepository, StudentRepository studentRepository) {
+        this.config = config;
+        this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
+
+        List<BotCommand> listofCommands = new ArrayList<>();
+        listofCommands.add(new BotCommand("/start", "get a welcome message"));
+        listofCommands.add(new BotCommand("/mydata", "get your data stored"));
+        listofCommands.add(new BotCommand("/deletedata", "delete my data"));
+        listofCommands.add(new BotCommand("/help", "info how to use this bot"));
+        listofCommands.add(new BotCommand("/settings", "set your preferences"));
+        var yesButton = new InlineKeyboardButton();
+
+        yesButton.setText("Yes");
+        yesButton.setCallbackData(YES_BUTTON);
+        try {
+            this.execute(new SetMyCommands(listofCommands, new BotCommandScopeDefault(), null));
+        } catch (TelegramApiException e) {
+            log.error("Error setting bot's command list: " + e.getMessage());
+        }
+    }
 
     @Override
     public String getBotUsername() {
@@ -96,12 +101,19 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             } else {
                 if (messageText.contains("Поступил платёж")) {
+                    String name = update.getMessage().getFrom().getFirstName();
+                    System.out.println(name + " " + LocalTime.now().format(new DateTimeFormatterBuilder()
+                            .appendValue(HOUR_OF_DAY, 2)
+                            .appendLiteral(':')
+                            .appendValue(MINUTE_OF_HOUR, 2)
+                            .optionalStart().toFormatter()));
+
                     String phone4LastNumber = messageText.substring(messageText.length() - 5).replace("-", "");
                     List<Student> students = studentRepository.findAll().stream()
                             .filter(student -> student.getPhone() != null &&
                                     Arrays.stream(student.getPhone().split(", "))
 //                                            .peek(System.out::println)
-                                                    .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
+                                            .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
                             .collect(Collectors.toList());
 
                     if (students.isEmpty()) {
@@ -112,7 +124,24 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 .map(Student::toString)
                                 .forEach(s -> prepareAndSendMessage(chatId, s));
                     }
+                } else if (messageText.startsWith("Добавление нового ученика")) {
+                    String[] split = messageText.split("\n");
+                    Student student = Student.builder()
+                            .id(studentRepository.findAll().stream()
+                                    .map(Student::getId)
+                                    .max(Comparator.naturalOrder())
+                                    .orElse(0L) + 1)
+                            .fullNameChild(split[1])
+                            .fullNameParent(split[2])
+                            .city(split[3])
+                            .phone(split[4])
+                            .course(split[5])
+                            .build();
+                    studentRepository.save(student);
+                    prepareAndSendMessage(chatId, "Ученик добавлен.");
+                    System.out.println("Ученик добавлен.");
                 }
+
                 // Answer
 //                String replyToMessage = update.getMessage().getReplyToMessage().getText();
 
@@ -138,10 +167,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                         register(chatId);
                         break;
-                    case "послать всех нахер":
+                    case "Добавить нового ученика":
 
-                        prepareAndSendMessage(chatId, "Иди сам нахер");
-                        prepareAndSendMessage(chatId, "Иди сам нахер");
+                        prepareAndSendMessage(chatId, "Для добавления нового ученика," +
+                                " необходимо отправить сообщение по шаблону:\n\n" +
+                                "Добавление нового ученика\n" +
+                                "Имя фамилия ребенка\n" +
+                                "Имя фамилия родителя\n" +
+                                "город\n" +
+                                "телефон без 8 и слитно\n" +
+                                "название курса");
                         break;
 
 //                    default:
@@ -237,17 +272,17 @@ public class TelegramBot extends TelegramLongPollingBot {
         KeyboardRow row = new KeyboardRow();
 
         row.add("weather");
-        row.add("послать всех нахер");
+        row.add("Добавить нового ученика");
 
         keyboardRows.add(row);
 
-        row = new KeyboardRow();
-
-        row.add("register");
-        row.add("check my data");
-        row.add("delete my data");
-
-        keyboardRows.add(row);
+//        row = new KeyboardRow();
+//
+//        row.add("register");
+//        row.add("check my data");
+//        row.add("delete my data");
+//
+//        keyboardRows.add(row);
 
         keyboardMarkup.setKeyboard(keyboardRows);
 
@@ -284,14 +319,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-//        @Scheduled(cron = "${cron.scheduler}")
+    //        @Scheduled(cron = "${cron.scheduler}")
     public void sendAds() {
 
 //        var ads = adsRepository.findAll();
         var users = userRepository.findAll();
-            studentRepository.findAll().stream()
-                    .map(Student::getFullNameChild)
-                    .forEach(System.out::println);
+        studentRepository.findAll().stream()
+                .map(Student::getFullNameChild)
+                .forEach(System.out::println);
 //        for (Ads ad : ads) {
 //            for (TelegramUser telegramUser : users) {
 //                prepareAndSendMessage(telegramUser.getChatId(), ad.getAd());
