@@ -19,8 +19,6 @@ repositories {
 	mavenLocal()
 }
 
-
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -28,11 +26,17 @@ dependencies {
 	implementation group: 'org.telegram', name: 'telegrambots', version: '5.6.0'
 	implementation group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1'
 	implementation "org.flywaydb:flyway-core"
+//	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+	implementation 'com.sun.mail:javax.mail:1.6.2'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+//	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.5.4'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
 }
 
 configurations {

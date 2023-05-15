@@ -1,13 +1,16 @@
 package com.logicaScoolBot;
 
 import com.logicaScoolBot.config.BotConfig;
+import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
+import com.logicaScoolBot.repository.PaymentRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
+import com.logicaScoolBot.service.ReadEmails;
 import com.vdurmont.emoji.EmojiParser;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -24,12 +27,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
@@ -42,6 +48,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final UserRepository userRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
+    private final ReadEmails readEmails;
+    private final PaymentRepository paymentRepository;
 
     static final String HELP_TEXT = "This bot is created to demonstrate Spring capabilities.\n\n" +
             "You can execute commands from the main menu on the left or by typing a command:\n\n" +
@@ -54,10 +62,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     static final String ERROR_TEXT = "Error occurred: ";
 
-    public TelegramBot(BotConfig config, UserRepository userRepository, StudentRepository studentRepository) {
+    public TelegramBot(BotConfig config,
+                       UserRepository userRepository,
+                       StudentRepository studentRepository,
+                       ReadEmails readEmails,
+                       PaymentRepository paymentRepository) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
+        this.readEmails = readEmails;
+        this.paymentRepository = paymentRepository;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "get a welcome message"));
@@ -100,7 +114,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     prepareAndSendMessage(telegramUser.getChatId(), textToSend);
                 }
             } else {
-                if (messageText.contains("Поступил платёж")) {
+                if (messageText.contains("Поступил платёжhhh")) {
                     String name = update.getMessage().getFrom().getFirstName();
                     System.out.println(name + " " + LocalTime.now().format(new DateTimeFormatterBuilder()
                             .appendValue(HOUR_OF_DAY, 2)
@@ -319,19 +333,47 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-    //        @Scheduled(cron = "${cron.scheduler}")
+    @Scheduled(cron = "${cron.scheduler}")
     public void sendAds() {
 
-//        var ads = adsRepository.findAll();
-        var users = userRepository.findAll();
-        studentRepository.findAll().stream()
-                .map(Student::getFullNameChild)
-                .forEach(System.out::println);
-//        for (Ads ad : ads) {
-//            for (TelegramUser telegramUser : users) {
-//                prepareAndSendMessage(telegramUser.getChatId(), ad.getAd());
-//            }
-//        }
-//        users.forEach(u -> prepareAndSendMessage(u.getChatId(), "Иди сам нахер"));
+        Map<LocalDateTime, String> main = readEmails.main();
+        main.forEach((k, v) -> {
+            String[] split = v.substring(29).split(" ");
+            Integer integer = null;
+            try {
+                integer = Integer.valueOf(split[1]);
+            } catch (NumberFormatException e) {
+                System.out.println(e.getMessage());
+            }
+            String phone4LastNumber = v.substring(v.length() - 5).replace("-", "");
+            Payment build = Payment.builder()
+                    .createDate(k)
+                    .phone(phone4LastNumber)
+                    .amount(split[0] + (integer != null ? split[1] : ""))
+                    .build();
+            paymentRepository.save(build);
+            List<Student> students = getListStudent(v);
+
+            if (students.isEmpty()) {
+                userRepository.findAll().stream()
+                        .peek(u -> System.out.println(u.getFirstName()))
+                        .forEach(u -> prepareAndSendMessage(u.getChatId(), v + "\n\nНичего не найдено по этому номеру телефона\n\n"));
+            } else {
+                userRepository.findAll().stream()
+                        .peek(u -> System.out.println(u.getFirstName()))
+                        .forEach(u -> students.stream()
+                                .map(Student::toString)
+                                .forEach(s -> prepareAndSendMessage(u.getChatId(), v + "\n\n" + s + "\n\n")));
+            }
+        });
+    }
+
+    private List<Student> getListStudent(String messageText) {
+            String phone4LastNumber = messageText.substring(messageText.length() - 5).replace("-", "");
+            return studentRepository.findAll().stream()
+                    .filter(student -> student.getPhone() != null &&
+                            Arrays.stream(student.getPhone().split(", "))
+                                    .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
+                    .collect(Collectors.toList());
     }
 }

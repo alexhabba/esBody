@@ -20,7 +20,8 @@ bot:
   owner: 1
 
 cron:
-  scheduler: 0-59 * * * * *
+  scheduler: 0 */10 * * * ?
+#  scheduler: 0-59 * * * * *
 
 server:
   port: 8087

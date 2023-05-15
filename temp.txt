@@ -1,0 +1,6 @@
+keytool -import -trustcacerts -alias SberCaExt -file /Users/alex/Downloads/repo.maven.apache.org.cer -keystore cacerts -storepass changeit
+keytool -import -trustcacerts -alias SberCaRootExt -file путь_до/sberca-root-ext.pem -keystore cacerts -storepass changeit
+I
+В файле ~/. gradle/gradle.properties (если файла нет необходимо его создать) добавить две строки, про путь и пароль к сертификатам.
+systemProp.javax.net.ssi.trustStore=/Users/<вашлогин>/.gradle/cacerts systemProp.javax.net.ssi.trustStorePassword=changeit
+Под Windows путь должен быть ровно в таком виде, как в примере, с поправкой на логин.
