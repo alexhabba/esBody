@@ -33,9 +33,9 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
@@ -45,11 +45,20 @@ import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
+    private static final String KRISTINA = "Kristina";
+    private static final String ALEX = "Alex";
+    private static final String VERONIKA = "VERONIKA";
     private final UserRepository userRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
     private final ReadEmails readEmails;
     private final PaymentRepository paymentRepository;
+    private final Set<Long> chatIds = Set.of(1466178855L, 397009920L);
+    private final Map<String, Long> mapChatId = Map.of(
+            KRISTINA, 397009920L,
+            ALEX, 1466178855L
+//            VERONIKA, 1L
+    );
 
     static final String HELP_TEXT = "This bot is created to demonstrate Spring capabilities.\n\n" +
             "You can execute commands from the main menu on the left or by typing a command:\n\n" +
@@ -89,6 +98,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error("Error setting bot's command list: " + e.getMessage());
         }
     }
+
 
     @Override
     public String getBotUsername() {
@@ -335,7 +345,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Scheduled(cron = "${cron.scheduler}")
     public void sendAds() {
-
+        System.out.println(LocalDateTime.now());
         Map<LocalDateTime, String> main = readEmails.main();
         main.forEach((k, v) -> {
             String[] split = v.substring(29).split(" ");
@@ -356,10 +366,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             if (students.isEmpty()) {
                 userRepository.findAll().stream()
+                        .filter(u -> !u.getChatId().equals(mapChatId.get(KRISTINA)))
                         .peek(u -> System.out.println(u.getFirstName()))
                         .forEach(u -> prepareAndSendMessage(u.getChatId(), v + "\n\nНичего не найдено по этому номеру телефона\n\n"));
             } else {
                 userRepository.findAll().stream()
+                        .filter(u -> !u.getChatId().equals(mapChatId.get(KRISTINA)))
                         .peek(u -> System.out.println(u.getFirstName()))
                         .forEach(u -> students.stream()
                                 .map(Student::toString)
@@ -375,5 +387,34 @@ public class TelegramBot extends TelegramLongPollingBot {
                             Arrays.stream(student.getPhone().split(", "))
                                     .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
                     .collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "${cron.job.statisticEveryDay}")
+    public void invoke() {
+        int dayOfMonth = LocalDateTime.now().getDayOfMonth() - 1;
+
+        List<Payment> all = paymentRepository.findAll();
+
+        Integer sumMonth = all.stream()
+                .filter(payment -> payment.getCreateDate().isAfter(LocalDateTime.now().minusDays(dayOfMonth)))
+                .map(Payment::getAmount)
+                .map(Integer::valueOf)
+                .reduce(0, Integer::sum);
+
+        String amountMonth = "Сумма оплат за текущий месяц по СБП " + sumMonth;
+
+        Integer sumDay = all.stream()
+                .filter(payment -> payment.getCreateDate().isAfter(LocalDateTime.now().minusHours(24)))
+                .map(Payment::getAmount)
+                .map(Integer::valueOf)
+                .reduce(0, Integer::sum);
+
+        String amountDay = "Сумма оплат за текущий день по СБП " + sumDay;
+
+        mapChatId.forEach((k, v) -> {
+            prepareAndSendMessage(v, amountMonth);
+            prepareAndSendMessage(v, amountDay);
+        });
+
     }
 }
