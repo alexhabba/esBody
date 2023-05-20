@@ -23,5 +23,5 @@ cron:
 #  scheduler: 0 * * * * ?
   scheduler: 0 */5 * * * *
   job:
-    statisticEveryDay: 0 * * * * ?
+    statisticEveryDay: 0 0 2 * * *
 
