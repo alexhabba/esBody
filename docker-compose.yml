@@ -4,12 +4,17 @@ services:
   psql:
     image: 'postgres:13.3'
     container_name: 'postgres-logics-school'
+    ports:
+      - "5432:5432"
+    restart: "no"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: bot
     networks:
       - application-network
+    volumes:
+      - postgresql-database-data-volume:/var/lib/postgresql
 
   app:
     build:
@@ -24,11 +29,14 @@ services:
     environment:
       RDS_HOSTNAME: psql
       RDS_PORT: 5432
-      RDS_DB_NAME: postgres
+      RDS_DB_NAME: bot
       RDS_USERNAME: postgres
       RDS_PASSWORD: postgres
     networks:
       - application-network
+
+volumes:
+  postgresql-database-data-volume:
 
 networks:
   application-network:
