@@ -9,7 +9,7 @@ spring:
       ddl-auto: validate
     database: postgresql
   datasource:
-    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
+    url: jdbc:postgresql://${RDS_HOSTNAME:82.148.31.32}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
     username: ${RDS_USERNAME:postgres}
     password: ${RDS_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -23,5 +23,5 @@ cron:
 #  scheduler: 0 * * * * ?
   scheduler: 0 */5 * * * *
   job:
-    statisticEveryDay: 0 0 2 * * *
+    statisticEveryDay: 0 59 23 * * *
 
