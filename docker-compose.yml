@@ -14,7 +14,7 @@ services:
     networks:
       - application-network
     volumes:
-      - postgresql-database-data-volume:/var/lib/postgresql
+      - ./postgres-data:/var/lib/postgresql/data
 
   app:
     build:
@@ -36,7 +36,7 @@ services:
       - application-network
 
 volumes:
-  postgresql-database-data-volume:
+  postgres-data: {}
 
 networks:
-  application-network:
+  application-network: {}
