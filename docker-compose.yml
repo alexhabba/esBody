@@ -11,10 +11,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: bot
+      PGDATA: "/var/lib/postgresql/data/pgdata"
     networks:
       - application-network
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - /root/postgres-data:/var/lib/postgresql/data
 
   app:
     build:
@@ -23,7 +24,7 @@ services:
     container_name: Logics-school
     ports:
       - "8080:8080"
-    restart: "no"
+    restart: always
     depends_on:
       - psql
     environment:
