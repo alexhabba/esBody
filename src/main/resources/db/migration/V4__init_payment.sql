@@ -100,3 +100,30 @@ VALUES('2023-05-20 14:02:49.000', '1250', '9638');
 INSERT INTO bot.payment
 (create_date, amount, phone)
 VALUES('2023-05-20 17:52:35.000', '1250', '2653');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-23 15:02:41.000', '1000', '7683');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-23 15:22:49.000', '1250', '0008');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-23 16:02:23.000', '5000', '1214');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-23 16:49:55.000', '12350', '0664');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-23 17:23:26.000', '12350', '0890');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-24 15:27:00.000', '11050', '7407');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-24 13:55:01.000', '1250', '3175');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-24 17:08:38.000', '9600', '5537');
+INSERT INTO bot.payment
+(create_date, amount, phone)
+VALUES('2023-05-24 17:20:57.000', '10200', '6297');

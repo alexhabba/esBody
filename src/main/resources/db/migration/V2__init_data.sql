@@ -216,7 +216,7 @@ INSERT INTO bot.student
 VALUES(76, 'север', NULL, 'Репин Максим', 'Юля', '9055289415');
 INSERT INTO bot.student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(77, 'север', NULL, 'Пискунов Леон', 'Алиса', '9152234408');
+VALUES(77, 'Северный', 'Юнити, Питон', 'Пискунов Леон', 'Алиса', '9152234408');
 INSERT INTO bot.student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(78, 'север', NULL, 'Лазарко Дмитрий', 'Вера', '9262773703');
@@ -303,10 +303,16 @@ INSERT INTO bot.student
 VALUES(106, 'Северный', 'КГ', 'Виктория Адамчикова', 'Наталья', '9264293175');
 INSERT INTO bot.student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(107, 'Северный', 'Юнити, Питон', 'Пискунов Леон', 'Алиса', '9152234408');
-INSERT INTO bot.student
-(id, city, course, full_name_child, full_name_parent, phone)
 VALUES(108, 'Северный', 'Пайтон старт', 'Нилов Федор ', 'Наталия', '9099007310');
 INSERT INTO bot.student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(109, 'Дубна', 'ОЛиП', 'Ульянкин Иван ', 'Ирина', '9647880185');
+INSERT INTO bot.student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(110, 'Дубна ', 'Юнити', 'Булавин Артем ', 'Булавин Папа ', '9164101214');
+INSERT INTO bot.student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(111, 'Дубна ', 'Ли', 'Муравьёв Александр ', 'Наталья ', '9031070890');
+INSERT INTO bot.student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(112, 'Дубна ', 'Ли', 'Уколова Ариадна ', 'Надежда ', '9685913383');
