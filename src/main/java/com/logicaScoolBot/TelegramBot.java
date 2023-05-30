@@ -27,6 +27,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatterBuilder;
@@ -401,7 +403,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 .map(Integer::valueOf)
                 .reduce(0, Integer::sum);
 
-        String amountMonth = "Сумма оплат за текущий месяц по СБП " + sumMonth;
+        String amountMonth = "Сумма оплат за текущий месяц по СБП " + getFormatNumber(sumMonth);
 
         Integer sumDay = all.stream()
                 .filter(payment -> payment.getCreateDate().isAfter(LocalDateTime.now().minusHours(24)))
@@ -409,7 +411,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 .map(Integer::valueOf)
                 .reduce(0, Integer::sum);
 
-        String amountDay = "Сумма оплат за текущий день по СБП " + sumDay;
+        String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(sumDay);
 
         mapChatId.forEach((k, v) -> {
             prepareAndSendMessage(v, amountMonth);
@@ -417,4 +419,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         });
 
     }
-}
+
+    private String getFormatNumber(int number) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        // вот тут устанавливаем разделитель он и так по умолчанию пробел,
+        // но в этом примере я решил это сделать явно
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat df = new DecimalFormat();
+        df.setDecimalFormatSymbols(symbols);
+        // указываем сколько символов в группе
+        df.setGroupingSize(3);
+        return df.format(number);
+    }
+ }
