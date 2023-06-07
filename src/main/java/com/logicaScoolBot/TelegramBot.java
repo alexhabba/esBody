@@ -417,7 +417,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             prepareAndSendMessage(v, amountMonth);
             prepareAndSendMessage(v, amountDay);
         });
-
     }
 
     private String getFormatNumber(int number) {
