@@ -53,18 +53,22 @@ public class ReadEmails {
                 //Циклом пробегаемся по всем сообщениям
                 for (Message message : messages) {
                     String from = ((InternetAddress) message.getFrom()[0]).getAddress();
+                    if ("no-reply@tochka.com".equals(from)) {
+                        System.out.println("sdf");
+                    }
                     if ("no-reply@tochka.com".equals(from) && message.getSubject() != null
                             && message.getContent() != null
                             && message.getSubject().contains("Поступил платёж через")
                     ) {
                         LocalDateTime receivedDate = LocalDateTime.ofInstant(message.getReceivedDate().toInstant(), ZoneId.systemDefault());
-                        Multipart content = (Multipart) message.getContent();
-                        BodyPart bodyPart = content.getBodyPart(0);
-                        Multipart content1 = (Multipart) bodyPart.getContent();
-                        BodyPart bodyPart1 = content1.getBodyPart(0);
-                        Object content2 = bodyPart1.getContent();
+//                        Multipart content = (Multipart) message.getContent();
+//                        BodyPart bodyPart = content.getBodyPart(0);
+//                        Multipart content1 = (Multipart) bodyPart.getContent();
+//                        BodyPart bodyPart1 = content1.getBodyPart(0);
+//                        Object content2 = bodyPart1.getContent();
 
-                        map.put(receivedDate, content2.toString());
+                        map.put(receivedDate, message.getContent().toString().replace("\n", "").replace("\r", ""));
+//                        map.put(receivedDate, content2.toString());
                         message.setFlag(Flags.Flag.DELETED, true);
                     }
                 }

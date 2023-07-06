@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
@@ -100,7 +101,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error("Error setting bot's command list: " + e.getMessage());
         }
     }
-
 
     @Override
     public String getBotUsername() {
