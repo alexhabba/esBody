@@ -24,4 +24,5 @@ cron:
   scheduler: 0 */5 * * * *
   job:
     statisticEveryDay: 0 59 20 * * *
+    statusQr: 0 */5 * * * *
 

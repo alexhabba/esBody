@@ -1,0 +1,16 @@
+{
+  "Data": {
+    "merchantId": "MA0001094668",
+    "legalId": "LA0001107006",
+    "amount": 1300,
+    "currency": "RUB",
+    "paymentPurpose": "Оплата за Кристину. курс SQL",
+    "qrcType": "02",
+    "imageParams": {
+      "width": 200,
+      "height": 200,
+      "mediaType": "image/png"
+    },
+    "sourceName": "string"
+  }
+}

@@ -1,6 +1,6 @@
 package com.logicaScoolBot.config;
 
-import com.logicaScoolBot.TelegramBot;
+import com.logicaScoolBot.bot.TelegramBot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
