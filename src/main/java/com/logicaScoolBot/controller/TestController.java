@@ -3,7 +3,7 @@ package com.logicaScoolBot.controller;
 import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.repository.PaymentRepository;
-import com.logicaScoolBot.repository.StudentRepository;
+import com.logicaScoolBot.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ import java.util.List;
 public class TestController {
 
     private final PaymentRepository paymentRepository;
-    private final StudentRepository studentRepository;
+    private final StudentService studentService;
 
     @GetMapping("/")
     public String test() {
@@ -29,6 +29,6 @@ public class TestController {
 
     @GetMapping("/allUser")
     public List<Student> getAllUser() {
-        return studentRepository.findAll();
+        return studentService.getAllStudent();
     }
 }
