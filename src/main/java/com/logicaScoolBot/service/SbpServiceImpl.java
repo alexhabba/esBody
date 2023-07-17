@@ -25,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class SbpServiceImpl implements SbpService {
     private static final String URI_BASE = "https://enter.tochka.com/uapi/sbp/v1.0/";
@@ -57,6 +59,9 @@ public class SbpServiceImpl implements SbpService {
         String qrcId = data.get("qrcId");
         String payload = data.get("payload");
         Student student = studentRepository.findStudentByPhone(purpose);
+        if (isNull(student)) {
+            return "Нет клиента с таким номером";
+        }
         Qr qr = Qr.builder()
                 .qrcId(qrcId)
                 .status(QrStatus.NotStarted)

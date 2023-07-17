@@ -395,7 +395,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 .collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "${cron.job.statisticEveryDay}")
+//    @Scheduled(cron = "${cron.job.statisticEveryDay}")
     public void invoke() {
         int dayOfMonth = LocalDateTime.now().getDayOfMonth() - 1;
 
