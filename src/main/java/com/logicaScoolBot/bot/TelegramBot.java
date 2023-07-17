@@ -3,7 +3,6 @@ package com.logicaScoolBot.bot;
 import com.logicaScoolBot.config.BotConfig;
 import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Qr;
-import com.logicaScoolBot.entity.QrStatus;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.PaymentRepository;
@@ -13,9 +12,9 @@ import com.logicaScoolBot.service.ReadEmails;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -30,7 +29,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -54,6 +52,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
+    private static final String ADD_NEW_STUDENT = "Добавление нового ученика";
+
 
     private static final String KRISTINA = "Kristina";
     private static final String ALEX = "Alex";
@@ -61,7 +61,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final UserRepository userRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
-    private final ReadEmails readEmails;
     private final PaymentRepository paymentRepository;
     private final Set<Long> chatIds = Set.of(1466178855L, 397009920L);
     private final Map<String, Long> mapChatId = Map.of(
@@ -84,12 +83,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        StudentRepository studentRepository,
-                       ReadEmails readEmails,
                        PaymentRepository paymentRepository, SbpService sbpService) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
-        this.readEmails = readEmails;
         this.paymentRepository = paymentRepository;
         this.sbpService = sbpService;
 
@@ -130,32 +127,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                     prepareAndSendMessage(telegramUser.getChatId(), textToSend);
                 }
             } else {
-                if (messageText.contains("Поступил платёжhhh")) {
-                    String name = update.getMessage().getFrom().getFirstName();
-                    System.out.println(name + " " + LocalTime.now().format(new DateTimeFormatterBuilder()
-                            .appendValue(HOUR_OF_DAY, 2)
-                            .appendLiteral(':')
-                            .appendValue(MINUTE_OF_HOUR, 2)
-                            .optionalStart().toFormatter()));
-
-                    String phone4LastNumber = messageText.substring(messageText.length() - 5).replace("-", "");
-                    List<Student> students = studentRepository.findAll().stream()
-                            .filter(student -> student.getPhone() != null &&
-                                    Arrays.stream(student.getPhone().split(", "))
-//                                            .peek(System.out::println)
-                                            .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
-                            .collect(Collectors.toList());
-
-                    if (students.isEmpty()) {
-                        prepareAndSendMessage(chatId, "Ничего не найдено по этому номеру телефона");
-                        return;
-                    } else {
-                        students.stream()
-                                .map(Student::toString)
-                                .forEach(s -> prepareAndSendMessage(chatId, s));
-                    }
-                } else if (messageText.startsWith("Добавление нового ученика")) {
+                if (messageText.startsWith(ADD_NEW_STUDENT)) {
                     String[] split = messageText.split("\n");
+                    String phone = getPhoneFormat(split[4]);
+                    if (phone.length() != 10) {
+                        prepareAndSendMessage(chatId, "Неверный формат телефона");
+                        return;
+                    }
                     Student student = Student.builder()
                             .id(studentRepository.findAll().stream()
                                     .map(Student::getId)
@@ -164,7 +142,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             .fullNameChild(split[1])
                             .fullNameParent(split[2])
                             .city(split[3])
-                            .phone(split[4])
+                            .phone(phone)
                             .course(split[5])
                             .build();
                     studentRepository.save(student);
@@ -178,7 +156,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     //todo проверить что соответствует формату "QR 1000 9273888212"
                     String[] strArr = messageText.split(" ");
                     int amount = Integer.parseInt(strArr[1]) * 100;
-                    String purpose = strArr[2];
+                    String purpose = getPhoneFormat(strArr[2]);
                     String payload = sbpService.registerQr(amount, purpose);
                     prepareAndSendMessage(chatId, payload);
                 }
@@ -205,11 +183,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                         register(chatId);
                         break;
-                    case "Добавить нового ученика":
+                    case ADD_NEW_STUDENT:
 
                         prepareAndSendMessage(chatId, "Для добавления нового ученика," +
                                 " необходимо отправить сообщение по шаблону:\n\n" +
-                                "Добавление нового ученика\n" +
+                                ADD_NEW_STUDENT + "\n" +
                                 "Имя фамилия ребенка\n" +
                                 "Имя фамилия родителя\n" +
                                 "город\n" +
@@ -236,6 +214,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                 executeEditMessageText(text, chatId, messageId);
             }
         }
+    }
+
+    private String getPhoneFormat(String phone) {
+        phone = phone.replace("+", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("-", "")
+                .replace(" ", "");
+        return "7".equals(phone.substring(0, 1)) || "8".equals(phone.substring(0, 1)) ? phone.substring(1) : phone;
     }
 
     private void register(long chatId) {
@@ -310,7 +297,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         KeyboardRow row = new KeyboardRow();
 
         row.add(QR_GENERATE);
-        row.add("Добавить нового ученика");
+        row.add(ADD_NEW_STUDENT);
 
         keyboardRows.add(row);
 
@@ -349,53 +336,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-//    @Scheduled(cron = "${cron.scheduler}")
-    public void sendAds() {
-        System.out.println(LocalDateTime.now());
-        Map<LocalDateTime, String> main = readEmails.main();
-        main.forEach((k, v) -> {
-            String[] split = v.substring(29).split(" ");
-            Integer integer = null;
-            try {
-                integer = Integer.valueOf(split[1]);
-            } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
-            }
-            String phone4LastNumber = v.substring(v.length() - 5).replace("-", "");
-            Payment build = Payment.builder()
-                    .createDate(k)
-                    .phone(phone4LastNumber)
-                    .amount(split[0] + (integer != null ? split[1] : ""))
-                    .build();
-            paymentRepository.save(build);
-            List<Student> students = getListStudent(v);
-
-            if (students.isEmpty()) {
-                userRepository.findAll().stream()
-                        .filter(u -> !u.getChatId().equals(mapChatId.get(KRISTINA)))
-                        .peek(u -> System.out.println(u.getFirstName()))
-                        .forEach(u -> prepareAndSendMessage(u.getChatId(), v + "\n\nНичего не найдено по этому номеру телефона\n\n"));
-            } else {
-                userRepository.findAll().stream()
-                        .filter(u -> !u.getChatId().equals(mapChatId.get(KRISTINA)))
-                        .peek(u -> System.out.println(u.getFirstName()))
-                        .forEach(u -> students.stream()
-                                .map(Student::toString)
-                                .forEach(s -> prepareAndSendMessage(u.getChatId(), v + "\n\n" + s + "\n\n")));
-            }
-        });
-    }
-
-    private List<Student> getListStudent(String messageText) {
-        String phone4LastNumber = messageText.substring(messageText.length() - 5).replace("-", "");
-        return studentRepository.findAll().stream()
-                .filter(student -> student.getPhone() != null &&
-                        Arrays.stream(student.getPhone().split(", "))
-                                .anyMatch(x -> x.length() >= 4 && x.substring(x.length() - 4).equals(phone4LastNumber)))
-                .collect(Collectors.toList());
-    }
-
-//    @Scheduled(cron = "${cron.job.statisticEveryDay}")
+    //    @Scheduled(cron = "${cron.job.statisticEveryDay}")
     public void invoke() {
         int dayOfMonth = LocalDateTime.now().getDayOfMonth() - 1;
 
