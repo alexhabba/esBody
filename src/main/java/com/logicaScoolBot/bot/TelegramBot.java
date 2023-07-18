@@ -8,11 +8,9 @@ import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.PaymentRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
-import com.logicaScoolBot.service.ReadEmails;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -33,18 +31,11 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.time.temporal.ChronoField.HOUR_OF_DAY;
-import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 
 @Slf4j
 @Component
@@ -53,7 +44,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
     private static final String ADD_NEW_STUDENT = "Добавление нового ученика";
-
 
     private static final String KRISTINA = "Kristina";
     private static final String ALEX = "Alex";
@@ -127,11 +117,16 @@ public class TelegramBot extends TelegramLongPollingBot {
                     prepareAndSendMessage(telegramUser.getChatId(), textToSend);
                 }
             } else {
-                if (messageText.startsWith(ADD_NEW_STUDENT)) {
+                if (messageText.startsWith(ADD_NEW_STUDENT) && messageText.length() > ADD_NEW_STUDENT.length() ) {
                     String[] split = messageText.split("\n");
                     String phone = getPhoneFormat(split[4]);
                     if (phone.length() != 10) {
                         prepareAndSendMessage(chatId, "Неверный формат телефона");
+                        return;
+                    }
+                    Student studentByPhone = studentRepository.findStudentByPhone(phone);
+                    if (studentByPhone != null) {
+                        prepareAndSendMessage(chatId, "Такой студент уже есть в базе");
                         return;
                     }
                     Student student = Student.builder()

@@ -2,7 +2,6 @@ package com.logicaScoolBot.service;
 
 import com.logicaScoolBot.dto.DataDto;
 import com.logicaScoolBot.dto.RequestQrRegistrationDto;
-import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.entity.QrStatus;
 import com.logicaScoolBot.entity.Student;
@@ -12,13 +11,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
