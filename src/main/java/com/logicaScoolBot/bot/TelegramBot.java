@@ -32,10 +32,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -149,7 +151,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             "QR 1000 9273888212");
                 } else if (messageText.startsWith("QR")) {
                     //todo проверить что соответствует формату "QR 1000 9273888212"
-                    String[] strArr = messageText.split(" ");
+                    String[] strArr = messageText.split("\\s+");
                     int amount = Integer.parseInt(strArr[1]) * 100;
                     String purpose = getPhoneFormat(strArr[2]);
                     String payload = sbpService.registerQr(amount, purpose);
