@@ -25,4 +25,5 @@ cron:
   job:
     statisticEveryDay: 0 59 20 * * *
     statusQr: 0 */5 * * * *
+    delete_qr: 0 59 20 * * *
 
