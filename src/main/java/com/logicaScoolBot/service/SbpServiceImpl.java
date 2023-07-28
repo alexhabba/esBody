@@ -116,8 +116,8 @@ public class SbpServiceImpl implements SbpService {
 
     @Override
     @Transactional
-    public List<Qr> getAllByQRId(List<String> qrcIds) {
-        return qrRepository.findAllByQRId(qrcIds);
+    public List<Qr> getAllByQrId(List<String> qrcIds) {
+        return qrRepository.findAllByQrId(qrcIds);
     }
 
 }

@@ -15,13 +15,16 @@ import java.util.UUID;
 public interface QrRepository extends JpaRepository<Qr, UUID> {
 
     @Modifying
-    @Query(value = "update Qr as q set q.status = 'Accepted' where q.qrcId in (:qrsIdList)")
+    @Query("update Qr as q set q.status = 'Accepted' where q.qrcId in (:qrsIdList)")
     void updateStatuses(List<String> qrsIdList);
 
-    @Query(value = "select qr from Qr qr where qr.qrcId in (:qrsIdList)")
-    List<Qr> findAllByQRId(List<String> qrsIdList);
+    @Query("select qr from Qr qr where qr.qrcId in (:qrsIdList)")
+    List<Qr> findAllByQrId(List<String> qrsIdList);
 
     @Modifying
     @Query("delete from Qr q where q.createDate < :dateTime and q.status = 'NotStarted'")
     void deleteQr(@Param("dateTime") LocalDateTime dateTime);
+
+    @Query("select sum(q.amount) from Qr q where q.createDate >= :dateTime and q.status = 'Accepted'")
+    Integer getAmountSum(@Param("dateTime") LocalDateTime dateTime);
 }

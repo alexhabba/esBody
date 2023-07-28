@@ -19,7 +19,7 @@ public interface SbpService {
 
     List<String> statusQr();
 
-    List<Qr> getAllByQRId(List<String> qrcId);
+    List<Qr> getAllByQrId(List<String> qrcId);
 
 //    Qr save(Qr qr);
 //

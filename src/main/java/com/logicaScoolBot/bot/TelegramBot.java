@@ -1,11 +1,11 @@
 package com.logicaScoolBot.bot;
 
 import com.logicaScoolBot.config.BotConfig;
-import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.PaymentRepository;
+import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.logicaScoolBot.service.SbpService;
@@ -30,14 +30,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -54,6 +53,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final StudentRepository studentRepository;
     private final PaymentRepository paymentRepository;
+    private final QrRepository qrRepository;
     private final Set<Long> chatIds = Set.of(1466178855L, 397009920L);
     private final Map<String, Long> mapChatId = Map.of(
             KRISTINA, 397009920L,
@@ -75,12 +75,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        StudentRepository studentRepository,
-                       PaymentRepository paymentRepository, SbpService sbpService) {
+                       PaymentRepository paymentRepository, SbpService sbpService, QrRepository qrRepository) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.paymentRepository = paymentRepository;
         this.sbpService = sbpService;
+        this.qrRepository = qrRepository;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "Добро пожаловать!"));
@@ -119,7 +120,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     prepareAndSendMessage(telegramUser.getChatId(), textToSend);
                 }
             } else {
-                if (messageText.startsWith(ADD_NEW_STUDENT) && messageText.length() > ADD_NEW_STUDENT.length() ) {
+                if (messageText.startsWith(ADD_NEW_STUDENT) && messageText.length() > ADD_NEW_STUDENT.length()) {
                     String[] split = messageText.split("\n");
                     String phone = getPhoneFormat(split[4]);
                     if (phone.length() != 10) {
@@ -333,27 +334,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-    //    @Scheduled(cron = "${cron.job.statisticEveryDay}")
+    @Scheduled(cron = "${cron.job.statisticEveryDay}")
     public void invoke() {
-        int dayOfMonth = LocalDateTime.now().getDayOfMonth() - 1;
+        LocalDateTime dateTimeMonth = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1).atStartOfDay();
+        Integer amountSumMonth = qrRepository.getAmountSum(dateTimeMonth);
+        String amountMonth = "Сумма оплат за текущий месяц по СБП " + getFormatNumber(amountSumMonth);
 
-        List<Payment> all = paymentRepository.findAll();
-
-        Integer sumMonth = all.stream()
-                .filter(payment -> payment.getCreateDate().isAfter(LocalDateTime.now().minusDays(dayOfMonth)))
-                .map(Payment::getAmount)
-                .map(Integer::valueOf)
-                .reduce(0, Integer::sum);
-
-        String amountMonth = "Сумма оплат за текущий месяц по СБП " + getFormatNumber(sumMonth);
-
-        Integer sumDay = all.stream()
-                .filter(payment -> payment.getCreateDate().isAfter(LocalDateTime.now().minusHours(24)))
-                .map(Payment::getAmount)
-                .map(Integer::valueOf)
-                .reduce(0, Integer::sum);
-
-        String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(sumDay);
+        LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay();
+        Integer amountSumDay = qrRepository.getAmountSum(dateTimeDay);
+        String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(amountSumDay);
 
         mapChatId.forEach((k, v) -> {
             prepareAndSendMessage(v, amountMonth);
@@ -365,7 +354,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void statusQr() {
         System.out.println("зашли в метод проверки статусов");
         List<String> list = sbpService.statusQr();
-        List<Qr> qrs = sbpService.getAllByQRId(list);
+        List<Qr> qrs = sbpService.getAllByQrId(list);
 
         qrs.forEach(qr -> {
             Student student = studentRepository.findStudentByPhone(qr.getPurpose());
