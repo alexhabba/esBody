@@ -4,7 +4,6 @@ import com.logicaScoolBot.config.BotConfig;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
-import com.logicaScoolBot.repository.PaymentRepository;
 import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
@@ -52,7 +51,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final UserRepository userRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
-    private final PaymentRepository paymentRepository;
     private final QrRepository qrRepository;
     private final Set<Long> chatIds = Set.of(1466178855L, 397009920L);
     private final Map<String, Long> mapChatId = Map.of(
@@ -75,11 +73,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        StudentRepository studentRepository,
-                       PaymentRepository paymentRepository, SbpService sbpService, QrRepository qrRepository) {
+                       SbpService sbpService, QrRepository qrRepository) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
-        this.paymentRepository = paymentRepository;
         this.sbpService = sbpService;
         this.qrRepository = qrRepository;
 

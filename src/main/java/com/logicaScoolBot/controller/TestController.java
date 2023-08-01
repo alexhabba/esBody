@@ -1,8 +1,6 @@
 package com.logicaScoolBot.controller;
 
-import com.logicaScoolBot.entity.Payment;
 import com.logicaScoolBot.entity.Student;
-import com.logicaScoolBot.repository.PaymentRepository;
 import com.logicaScoolBot.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,15 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final PaymentRepository paymentRepository;
     private final StudentService studentService;
 
     @GetMapping("/")
     public String test() {
-        return paymentRepository.findAll().stream()
-                .map(Payment::getAmount)
-                .map(Integer::valueOf)
-                .reduce(0, Integer::sum).toString();
+        return "пока не реализовано";
     }
 
     @GetMapping("/allUser")
