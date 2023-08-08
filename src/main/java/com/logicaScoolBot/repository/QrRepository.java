@@ -15,8 +15,8 @@ import java.util.UUID;
 public interface QrRepository extends JpaRepository<Qr, UUID> {
 
     @Modifying
-    @Query("update Qr as q set q.status = 'Accepted' where q.qrcId in (:qrsIdList)")
-    void updateStatuses(List<String> qrsIdList);
+    @Query("update Qr as q set q.status = 'Accepted', q.updateDate = :dateTime where q.qrcId in (:qrsIdList)")
+    void updateStatuses(@Param("qrsIdList")List<String> qrsIdList, @Param("dateTime") LocalDateTime dateTime);
 
     @Query("select qr from Qr qr where qr.qrcId in (:qrsIdList)")
     List<Qr> findAllByQrId(List<String> qrsIdList);
@@ -26,5 +26,8 @@ public interface QrRepository extends JpaRepository<Qr, UUID> {
     void deleteQr(@Param("dateTime") LocalDateTime dateTime);
 
     @Query("select sum(q.amount) from Qr q where q.createDate >= :dateTime and q.status = 'Accepted'")
-    Integer getAmountSum(@Param("dateTime") LocalDateTime dateTime);
+    Integer getAmountSumToMonth(@Param("dateTime") LocalDateTime dateTime);
+
+    @Query("select sum(q.amount) from Qr q where q.updateDate >= :dateTime and q.status = 'Accepted'")
+    Integer getAmountSumToDay(@Param("dateTime") LocalDateTime dateTime);
 }

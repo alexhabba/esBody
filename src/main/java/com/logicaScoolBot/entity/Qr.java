@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
@@ -40,6 +40,9 @@ public class Qr {
 
     @CreationTimestamp
     private LocalDateTime createDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
 
     @ManyToOne
     private Student student;

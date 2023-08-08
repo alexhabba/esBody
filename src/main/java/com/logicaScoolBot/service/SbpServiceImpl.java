@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -109,7 +110,7 @@ public class SbpServiceImpl implements SbpService {
                 .collect(Collectors.toList());
 
         qrsNotStartedStatuses = getQrStatus(qrsNotStartedStatuses);
-        qrRepository.updateStatuses(qrsNotStartedStatuses);
+        qrRepository.updateStatuses(qrsNotStartedStatuses, LocalDateTime.now());
 
         return qrsNotStartedStatuses;
     }

@@ -334,11 +334,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Scheduled(cron = "${cron.job.statisticEveryDay}")
     public void invoke() {
         LocalDateTime dateTimeMonth = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1).atStartOfDay();
-        Integer amountSumMonth = qrRepository.getAmountSum(dateTimeMonth);
+        Integer amountSumMonth = qrRepository.getAmountSumToMonth(dateTimeMonth);
         String amountMonth = "Сумма оплат за текущий месяц по СБП " + getFormatNumber(amountSumMonth);
 
         LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay();
-        Integer amountSumDay = qrRepository.getAmountSum(dateTimeDay);
+        Integer amountSumDay = qrRepository.getAmountSumToDay(dateTimeDay);
         String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(amountSumDay);
 
         mapChatId.forEach((k, v) -> {

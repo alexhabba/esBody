@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,12 @@ public class QrServiceImpl implements QrService {
         System.out.println("start delete Qr");
         qrRepository.deleteQr(LocalDateTime.now().minusDays(4));
         System.out.println("end delete Qr");
+    }
+
+    @Override
+    @Transactional
+    public void updateQrStatuses(List<String> qrsIdList, LocalDateTime dateTime ) {
+        qrRepository.updateStatuses(qrsIdList, dateTime);
     }
 }
 
