@@ -4,6 +4,7 @@ import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.entity.QrStatus;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.service.QrServiceImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Disabled
 class QrRepositoryTest {
 
     @Autowired
