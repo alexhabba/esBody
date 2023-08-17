@@ -356,7 +356,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         qrs.forEach(qr -> {
             Student student = studentRepository.findStudentByPhone(qr.getPurpose());
             String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + student.toString();
-            mapChatId.values().forEach(chatId -> prepareAndSendMessage(chatId, textMessage)
+            userRepository.findAll().stream()
+                    .map(TelegramUser::getChatId)
+                    .forEach(chatId -> prepareAndSendMessage(chatId, textMessage)
             );
         });
 
