@@ -52,11 +52,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final StudentRepository studentRepository;
     private final QrRepository qrRepository;
-    private final Set<Long> chatIds = Set.of(1466178855L, 397009920L);
     private final Map<String, Long> mapChatId = Map.of(
             KRISTINA, 397009920L,
-            ALEX, 1466178855L,
-            VERONIKA, 5090638968L
+            ALEX, 1466178855L
+//            VERONIKA, 5090638968L
     );
 
     static final String HELP_TEXT = "This bot is created to demonstrate Spring capabilities.\n\n" +
