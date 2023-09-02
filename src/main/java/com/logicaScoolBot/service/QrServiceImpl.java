@@ -18,9 +18,7 @@ public class QrServiceImpl implements QrService {
     @Scheduled(cron = "${cron.job.delete_qr}")
     @Transactional
     public void deleteQr() {
-        System.out.println("start delete Qr");
         qrRepository.deleteQr(LocalDateTime.now().minusDays(4));
-        System.out.println("end delete Qr");
     }
 
     @Override

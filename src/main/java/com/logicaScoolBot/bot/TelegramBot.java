@@ -141,7 +141,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                             .build();
                     studentRepository.save(student);
                     prepareAndSendMessage(chatId, "Ученик добавлен.");
-                    System.out.println("Ученик добавлен.");
                 } else if (messageText.equals(QR_GENERATE)) {
                     prepareAndSendMessage(chatId, "Для того чтоб сгенерировать QR, необходимо отправить сообщение с суммой и номером телефона клиента, для которого хотим сгенерировать QR.\n" +
                             "например:\n" +
@@ -348,7 +347,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Scheduled(cron = "${cron.job.statusQr}")
     public void statusQr() {
-        System.out.println("зашли в метод проверки статусов");
         List<String> list = sbpService.statusQr();
         List<Qr> qrs = sbpService.getAllByQrId(list);
 
@@ -361,7 +359,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             );
         });
 
-        System.out.println();
     }
 
     private String getFormatNumber(int number) {

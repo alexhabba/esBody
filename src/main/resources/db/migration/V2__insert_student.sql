@@ -330,7 +330,7 @@ INSERT INTO student
 VALUES(116, 'Дубна ', 'КГ', 'Лебедев Платон', 'Лебедев Вадим ', '9670687471');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(118, 'Москва', 'Юнити', 'Иван ', 'Ольга', '9032795519');
+VALUES(117, 'Москва', 'Юнити', 'Иван ', 'Ольга', '9032795519');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(118, 'Москва', 'Видеоблогинг', 'Баринова Полина ', 'Жанна Михайловна ', '9096590517');

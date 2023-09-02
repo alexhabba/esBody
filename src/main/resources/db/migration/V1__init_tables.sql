@@ -6,7 +6,7 @@ CREATE TABLE student
     full_name_child  varchar(255) NULL,
     full_name_parent varchar(255) NULL,
     phone            varchar(255) NULL,
-    CONSTRAINT student_2_pkey PRIMARY KEY (id)
+    CONSTRAINT student_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE telegram_user
