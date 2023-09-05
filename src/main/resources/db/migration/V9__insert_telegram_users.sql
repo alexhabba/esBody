@@ -16,3 +16,6 @@ VALUES(5090638968, 'Вероника', NULL, '2023-08-29 10:36:20.206', NULL);
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name)
 VALUES(1957399392, 'Аня', NULL, '2023-08-29 11:41:01.345', NULL);
+INSERT INTO telegram_user
+(chat_id, first_name, last_name, registered_at, user_name)
+VALUES(507440411, 'Aysun', NULL, '2023-09-03 07:36:39.937', 'aysuuunnn');

@@ -117,7 +117,7 @@ INSERT INTO student
 VALUES(43, 'Дубна', NULL, 'Дягилева Варвара', 'Татьяна', '9853311399');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(44, 'Дубна', NULL, 'Нилов Фёдор', 'Наталия', '9099007310');
+VALUES(44, 'Дубна', 'Пайтон старт', 'Нилов Фёдор', 'Наталия', '9099007310');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(45, 'Дубна', NULL, 'Артём Прокофьев', 'Оксана', '9031888687');
@@ -303,9 +303,6 @@ INSERT INTO student
 VALUES(106, 'Северный', 'КГ', 'Виктория Адамчикова', 'Наталья', '9264293175');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(108, 'Северный', 'Пайтон старт', 'Нилов Федор ', 'Наталия', '9099007310');
-INSERT INTO student
-(id, city, course, full_name_child, full_name_parent, phone)
 VALUES(109, 'Дубна', 'ОЛиП', 'Ульянкин Иван ', 'Ирина', '9647880185');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
@@ -337,4 +334,18 @@ VALUES(118, 'Москва', 'Видеоблогинг', 'Баринова Пол
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(119, 'Москва', 'Геймдизайн', 'Максим ', 'Ольга', '9031552784');
-
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(120, 'Дубна', 'ПайтонС', 'Корчагин Артем', 'Корчагина Елена', '9199634823');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(121, 'Москва', 'КГ', 'Михайловская Виолетта', 'Людмила', '9060659525');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(122, 'Воскресенск', 'Геймдизайн', 'Александр Зангиев', 'Светлана Зангиева', '9167322746');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(123, 'Москва', 'Математика', 'Семериков Матвей', 'Семерикова Анна', '9091610135');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(124, 'Москва', 'КГ', 'Саакян Гагик', 'Саакян Карина', '9670158663');
