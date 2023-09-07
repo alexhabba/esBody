@@ -21,6 +21,8 @@ public class TelegramUser {
 
     private String userName;
 
+    private String city;
+
     private Timestamp registeredAt;
 
 }
