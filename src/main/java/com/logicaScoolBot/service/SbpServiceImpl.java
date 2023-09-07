@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,16 +104,20 @@ public class SbpServiceImpl implements SbpService {
     @Transactional
     @Override
     public List<String> statusQr() {
-        List<Qr> qrs = qrRepository.findAll();
-        List<String> qrsNotStartedStatuses = qrs.stream()
-                .filter(qr -> qr.getStatus() == QrStatus.NotStarted)
-                .map(Qr::getQrcId)
-                .collect(Collectors.toList());
+        try {
+            List<Qr> qrs = qrRepository.findAll();
+            List<String> qrsNotStartedStatuses = qrs.stream()
+                    .filter(qr -> qr.getStatus() == QrStatus.NotStarted)
+                    .map(Qr::getQrcId)
+                    .collect(Collectors.toList());
 
-        qrsNotStartedStatuses = getQrStatus(qrsNotStartedStatuses);
-        qrRepository.updateStatuses(qrsNotStartedStatuses, LocalDateTime.now());
+            qrsNotStartedStatuses = getQrStatus(qrsNotStartedStatuses);
+            qrRepository.updateStatuses(qrsNotStartedStatuses, LocalDateTime.now());
 
-        return qrsNotStartedStatuses;
+            return qrsNotStartedStatuses;
+        } catch (Exception ex) {
+            return List.of();
+        }
     }
 
     @Override

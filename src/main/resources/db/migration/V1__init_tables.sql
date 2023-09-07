@@ -1,7 +1,7 @@
 CREATE TABLE student
 (
     id               int8         NOT NULL,
-    city             varchar(10) NULL,
+    city             varchar(20) NULL,
     course           varchar(50) NULL,
     full_name_child  varchar(50) NULL,
     full_name_parent varchar(50) NULL,
@@ -16,6 +16,6 @@ CREATE TABLE telegram_user
     last_name     varchar(30) NULL,
     registered_at timestamp    NULL,
     user_name     varchar(30) NULL,
-    city          varchar(10) NULL,
+    city          varchar(20) NULL,
     CONSTRAINT telegram_user_pkey PRIMARY KEY (chat_id)
 );
