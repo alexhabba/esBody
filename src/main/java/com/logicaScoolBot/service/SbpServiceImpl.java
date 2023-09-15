@@ -7,6 +7,7 @@ import com.logicaScoolBot.entity.QrStatus;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -75,7 +76,9 @@ public class SbpServiceImpl implements SbpService {
     }
 
     @Override
+    @Timed("getQrStatus")
     public List<String> getQrStatus(List<String> qrcIdNotStartedList) {
+        System.out.println("getQrStatus");
         String qrsString = String.join(",", qrcIdNotStartedList);
         HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(headers);
         Object body = restTemplate.exchange(URI_GET_QRC_STATUS.replace("qrcId", qrsString), HttpMethod.GET, entity, Object.class).getBody();

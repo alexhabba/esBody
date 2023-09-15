@@ -3,9 +3,6 @@ INSERT INTO telegram_user
 VALUES(1466178855, 'Александр', 'Хабибулин', '2023-08-29 07:05:25.346', 'AlexHabba');
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name)
-VALUES(1026708391, 'Лена', NULL, '2023-08-29 09:27:52.635', 'KolotevaE');
-INSERT INTO telegram_user
-(chat_id, first_name, last_name, registered_at, user_name)
 VALUES(5347044474, 'Алгоритмика', 'Северный', '2023-08-29 09:28:15.062', 'Algoritmika_sev');
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name)
@@ -31,3 +28,12 @@ VALUES(1281122193, 'Мышка', NULL, '2023-09-06 07:12:27.871', 'mous_sss');
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name)
 VALUES(5586477666, 'Дарья', NULL, '2023-09-07 07:23:04.630', 'NightSilenceWalker');
+INSERT INTO telegram_user
+(chat_id, first_name, last_name, registered_at, user_name, city)
+VALUES(2020780104, 'Елена', NULL, '2023-09-08 11:19:08.611', NULL, NULL);
+INSERT INTO telegram_user
+(chat_id, first_name, last_name, registered_at, user_name, city)
+VALUES(720213450, 'Ma', NULL, '2023-09-10 14:14:35.712', 'Maridrk', NULL);
+INSERT INTO telegram_user
+(chat_id, first_name, last_name, registered_at, user_name, city)
+VALUES(397009920, 'Kristina', NULL, '2023-09-10 16:30:44.881', 'KristinaR777', NULL);

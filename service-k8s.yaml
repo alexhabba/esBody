@@ -1,0 +1,39 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: test-deploy-v1
+  labels:
+     env: prod
+     app: main
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: kgba
+  template:
+    metadata:
+      labels:
+        project: kgba
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    env: prod
+spec:
+  selector:
+    project: kgba      # Selecting Pods with Labels
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 80        # Port on Load Balancer
+      targetPort: 80  # Port on POD
+  type: LoadBalancer

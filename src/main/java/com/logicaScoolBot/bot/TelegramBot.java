@@ -9,6 +9,7 @@ import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -133,11 +134,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                                     .map(Student::getId)
                                     .max(Comparator.naturalOrder())
                                     .orElse(0L) + 1)
-                            .fullNameChild(split[1])
-                            .fullNameParent(split[2])
-                            .city(split[3])
-                            .phone(phone)
-                            .course(split[5])
+                            .fullNameChild(split[1].trim())
+                            .fullNameParent(split[2].trim())
+                            .city(split[3].trim())
+                            .phone(phone.trim())
+                            .course(split[5].trim())
                             .build();
                     studentRepository.save(student);
                     prepareAndSendMessage(chatId, "Ученик добавлен.");
@@ -329,6 +330,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
+    @Timed("statisticEveryDay")
     @Scheduled(cron = "${cron.job.statisticEveryDay}")
     public void invoke() {
         LocalDateTime dateTimeMonth = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1).atStartOfDay();
@@ -345,6 +347,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         });
     }
 
+    @Timed("statusQr")
     @Scheduled(cron = "${cron.job.statusQr}")
     public void statusQr() {
         List<String> list = sbpService.statusQr();

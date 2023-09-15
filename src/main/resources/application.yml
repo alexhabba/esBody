@@ -9,8 +9,9 @@ spring:
       ddl-auto: validate
     database: postgresql
   datasource:
-    url: jdbc:postgresql://${RDS_HOSTNAME:81.163.27.54}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
 #    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
+    url: jdbc:postgresql://${RDS_HOSTNAME:81.163.27.54}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
+#    url: jdbc:postgresql://${RDS_HOSTNAME:host.docker.internal:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
     username: ${RDS_USERNAME:postgres}
     password: ${RDS_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -25,6 +26,16 @@ cron:
   scheduler: 0 */5 * * * *
   job:
     statisticEveryDay: 0 59 20 * * *
-    statusQr: 0 * * * * *
+    statusQr: 0,30 * * * * *
     delete_qr: 0 59 20 * * *
 
+
+management:
+  endpoints.web.exposure.include: 'prometheus, health'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
