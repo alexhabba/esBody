@@ -41,6 +41,8 @@ public class Qr {
     @Enumerated(EnumType.STRING)
     private QrStatus status;
 
+    private String nameAdder;
+
     @CreationTimestamp
     private LocalDateTime createDate;
 

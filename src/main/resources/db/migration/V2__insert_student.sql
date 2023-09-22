@@ -300,9 +300,6 @@ INSERT INTO student
 VALUES(105, 'Москва', 'ЛИ', 'Каймаков Герман', 'Мельничук Елена', '9857787995');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(106, 'Москва', 'КГ', 'Виктория Адамчикова', 'Наталья', '9264293175');
-INSERT INTO student
-(id, city, course, full_name_child, full_name_parent, phone)
 VALUES(109, 'Дубна', 'ОЛиП', 'Ульянкин Иван ', 'Ирина', '9647880185');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
@@ -360,7 +357,7 @@ INSERT INTO student
 VALUES(127, 'Воскресенск', 'Графический дизайн', 'Жорин Юрий ', 'Жорина Любовь', '9853686097');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(128, 'Воскресенск ', 'Визуальное Программирование', 'Дмитрий Батраков', 'Катерина Батракова', '9265493553');
+VALUES(128, 'Воскресенск', 'Визуальное Программирование', 'Дмитрий Батраков', 'Катерина Батракова', '9265493553');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(129, 'Воскресенск', 'Графический дизайн', 'Золотова Анастасия', 'Золотов Геннадий', '9152443220');
@@ -443,7 +440,7 @@ INSERT INTO student
 VALUES(154, 'Воскресенск', 'Визуальное программирование', 'Плищеев Михаил', 'Плищеев Дмитрий', '9268520905');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(155, 'Воскресенск ', 'Визуальное программирование', 'Назар Цымбулов', 'Алина Цымбулова', '9260518210');
+VALUES(155, 'Воскресенск', 'Визуальное программирование', 'Назар Цымбулов', 'Алина Цымбулова', '9260518210');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(156, 'Москва', 'КГ', 'Роман Миронов', 'Ирина', '9263517014');
@@ -528,3 +525,69 @@ VALUES(181, 'Дубна', 'Геймдизайн', 'Фещак Григорий',
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(182, 'Москва', 'Геймдизайн', 'Александр', 'Ксения', '9267375141');
+
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(183, 'Дубна', 'Юнити', 'Мордашев Иван', 'Мордашева Светлана', '9150414083');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(184, 'Дубна', 'КГ', 'Тимощук Сергей', 'Тимощук Елена', '9998485857');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(185, 'Воскресенск', 'Визуальное программирование', 'Уварова Варвара', 'Уварова Марина', '9977574644');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(186, 'Москва', 'ВБ', 'Ярослав Серов', 'Татьяна', '9688042725');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(187, 'Москва', 'Юнити', 'Зотов Ярослав', 'Светлана', '9168779491');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(188, 'Дубна', 'Вп', 'Владислав Соколов', 'Дина Соколова', '9032796316');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(189, 'Дубна', 'Пайтон Старт', 'Мараховский Владимир', 'Татьяна', '9034712243');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(190, 'Дубна', 'Геймдизайн', 'Колесов Леонид', 'Катерина', '9265834150');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(191, 'Воскресенск', 'ВП', 'Семён Семён', 'Юлия', '9258256211');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(192, 'Москва', 'ОЛиП', 'Алиса Акимова', 'Мария', '9251066327');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(193, 'Москва', 'ОЛиП', 'Элима Темаева', 'Эмилия', '9265345386');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(194, 'Дубна', 'ВП', 'Матюшин Тимофей', 'Виктория', '9161164755');
+
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(195, 'Дубна', 'КГ', 'Башинский Егор', 'Олег', '9162160808');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(196, 'Дубна', 'КГ', 'Иванов Егор', 'Елизавета', '9261481069');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(197, 'Раменское', 'ВП', 'Егор Милостный', 'Наталья Милостная', '9268447044');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(198, 'Раменское', 'ВП', 'Борис Савицкий', 'Наталья Савицкая', '9175464629');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(199, 'Дубна', 'Пайтон С', 'Кожемяк Алексей', 'Вера', '9161178281');
+
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(200, 'Москва', 'ОлиП', 'Николай', 'Виктория', '9258839405');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(201, 'Дубна', 'Питон', 'Рагимов Аслан', 'Рагимова Розанна', '9299304173');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(202, 'Дубна', 'Юнити', 'Федоров Алексей сын', 'Алексей', '9169847446');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(203, 'Раменское', 'ВП', 'Елисей Моногаров', 'Елена Моногарова', '9295074606');

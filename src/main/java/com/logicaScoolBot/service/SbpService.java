@@ -13,7 +13,7 @@ public interface SbpService {
      * @param purpose
      * @return Ссылка на QR-код
      */
-    String registerQr(int amount, String purpose);
+    String registerQr(int amount, String purpose, String nameAdder);
 
     List<String> getQrStatus(List<String> qrcIdNotStartedList);
 

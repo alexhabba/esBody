@@ -1,12 +1,15 @@
 package com.logicaScoolBot.bot;
 
 import com.logicaScoolBot.config.BotConfig;
+import com.logicaScoolBot.entity.City;
+import com.logicaScoolBot.entity.Consumption;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
+import com.logicaScoolBot.service.ConsumptionService;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
 import io.micrometer.core.annotation.Timed;
@@ -33,10 +36,18 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
+
+import static com.logicaScoolBot.entity.City.COMMON;
+import static com.logicaScoolBot.entity.City.DUBNA;
+import static com.logicaScoolBot.entity.City.MOSCOW;
+import static com.logicaScoolBot.entity.City.RAMENSKOE;
+import static com.logicaScoolBot.entity.City.VOSKRESENSK;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
@@ -53,10 +64,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final StudentRepository studentRepository;
     private final QrRepository qrRepository;
+    private final ConsumptionService consumptionService;
+
     private final Map<String, Long> mapChatId = Map.of(
             KRISTINA, 397009920L,
             ALEX, 1466178855L
-//            VERONIKA, 5090638968L
+    );
+
+    private final Map<String, City> MAP_CITY = Map.of(
+            "ДУБНА", DUBNA,
+            "МОСКВА", MOSCOW,
+            "ВОСКРЕСЕНСК", VOSKRESENSK,
+            "РАМЕНСКОЕ", RAMENSKOE,
+            "ОБЩИЙ", COMMON
     );
 
     static final String HELP_TEXT = "This bot is created to demonstrate Spring capabilities.\n\n" +
@@ -73,12 +93,14 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        StudentRepository studentRepository,
-                       SbpService sbpService, QrRepository qrRepository) {
+                       SbpService sbpService, QrRepository qrRepository,
+                       ConsumptionService consumptionService) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.sbpService = sbpService;
         this.qrRepository = qrRepository;
+        this.consumptionService = consumptionService;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "Добро пожаловать!"));
@@ -103,6 +125,42 @@ public class TelegramBot extends TelegramLongPollingBot {
         return config.getToken();
     }
 
+    public void addConsumption(String messageText, long chatId) {
+        if (mapChatId.containsValue(chatId)) {
+            List<String> list = Arrays.asList(messageText.split("\\s+"));
+
+            Optional<String> anyCity = list.stream()
+                    .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
+                    .findAny();
+
+            long amount = 0;
+
+            try {
+                amount = Long.parseLong(list.get(0));
+                if (anyCity.isEmpty()) {
+                    prepareAndSendMessage(chatId, "Не указан город");
+                    throw new RuntimeException();
+                }
+                Consumption build = Consumption.builder()
+                        .amount(amount)
+                        .city(MAP_CITY.get(anyCity.get().toUpperCase()))
+                        .description(messageText)
+                        .build();
+
+                consumptionService.save(build);
+                prepareAndSendMessage(chatId, "Расход добавлен");
+                throw new RuntimeException();
+            } catch (NumberFormatException ex) {
+                if (anyCity.isPresent()) {
+                    prepareAndSendMessage(chatId, "для добавления расхода, сначала пишем сумму потом город и на что потрачено");
+                    throw new RuntimeException();
+                }
+            }
+
+        }
+
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
 
@@ -110,6 +168,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
+            addConsumption(messageText, chatId);
             if (messageText.contains("/send") && config.getOwnerId() == chatId) {
                 var textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
                 var users = userRepository.findAll();
@@ -139,6 +198,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             .city(split[3].trim())
                             .phone(phone.trim())
                             .course(split[5].trim())
+                            .nameAdder(userRepository.findById(chatId).orElseThrow().getFirstName())
                             .build();
                     studentRepository.save(student);
                     prepareAndSendMessage(chatId, "Ученик добавлен.");
@@ -151,7 +211,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     String[] strArr = messageText.split("\\s+");
                     int amount = Integer.parseInt(strArr[1]) * 100;
                     String purpose = getPhoneFormat(strArr[2]);
-                    String payload = sbpService.registerQr(amount, purpose);
+                    TelegramUser telegramUser = userRepository.findById(chatId).orElseThrow();
+                    String payload = sbpService.registerQr(amount, purpose, telegramUser.getFirstName());
                     prepareAndSendMessage(chatId, payload);
                 }
 
@@ -359,7 +420,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             userRepository.findAll().stream()
                     .map(TelegramUser::getChatId)
                     .forEach(chatId -> prepareAndSendMessage(chatId, textMessage)
-            );
+                    );
         });
 
     }

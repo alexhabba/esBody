@@ -5,6 +5,7 @@ CREATE TABLE qr
     purpose     varchar(255) NULL,
     amount      int8         NOT NULL,
     status      varchar(20)  NULL,
+    name_adder  varchar(20)  NULL,
     student_id  int8         NOT NULL,
     create_date timestamp    NOT NULL,
     CONSTRAINT qr_pkey PRIMARY KEY (id),

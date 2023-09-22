@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,7 +49,7 @@ public class SbpServiceImpl implements SbpService {
 
     @Override
     @Transactional
-    public String registerQr(int amount, String purpose) {
+    public String registerQr(int amount, String purpose, String nameAdder) {
         RequestQrRegistrationDto requestQrRegistrationDto = createRequestQrRegistrationDto(amount, purpose);
         HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(requestQrRegistrationDto, headers);
         Object body = restTemplate.exchange(URI_REGISTER_QR, HttpMethod.POST, entity, Object.class).getBody();
@@ -67,6 +66,7 @@ public class SbpServiceImpl implements SbpService {
                 .status(QrStatus.NotStarted)
                 .amount(amount / 100)
                 .purpose(purpose)
+                .nameAdder(nameAdder)
                 .student(student)
                 .build();
         student.getQrc().add(qr);
@@ -78,7 +78,6 @@ public class SbpServiceImpl implements SbpService {
     @Override
     @Timed("getQrStatus")
     public List<String> getQrStatus(List<String> qrcIdNotStartedList) {
-        System.out.println("getQrStatus");
         String qrsString = String.join(",", qrcIdNotStartedList);
         HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(headers);
         Object body = restTemplate.exchange(URI_GET_QRC_STATUS.replace("qrcId", qrsString), HttpMethod.GET, entity, Object.class).getBody();

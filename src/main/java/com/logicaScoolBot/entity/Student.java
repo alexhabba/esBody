@@ -35,6 +35,8 @@ public class Student {
 
     private String course;
 
+    private String nameAdder;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Qr> qrc;
 
