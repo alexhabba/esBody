@@ -208,3 +208,29 @@ VALUES('50ad634b-d8e1-4ab6-bd68-5b969b80b9ba'::uuid, 'AD10000M6FLR4AIM83U8AA66MR
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, student_id, create_date, update_date)
 VALUES('522e6a22-1b90-4a27-9c28-02efc9f3c03e'::uuid, 'AD10003OHCVEVV8F8QQRJT8QC8GUHCDE', '9778703387', 5500, 'NotStarted', 65, '2023-09-15 06:15:15.157', '2023-09-15 06:15:15.157');
+
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('7870c442-48e0-4ed1-a499-6a2803677cc9'::uuid, 'AD10001MN87UKNKU8H1O0B2OT308I5J3', '9653541637', 5500, 'NotStarted', 'Алгоритмика', 204, '2023-09-22 15:30:48.506', '2023-09-22 15:30:48.506');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('d016acc5-730d-4e71-a03d-ded10bb20fdc'::uuid, 'AD10004LUJG3F8R98CKAQMTR39E1O51J', '9165948689', 5500, 'NotStarted', 'Алгоритмика', 70, '2023-09-22 15:44:18.623', '2023-09-22 15:44:18.623');
+
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('7870c442-48e0-4ed1-a499-6a2803677cc9'::uuid, 'AD10001MN87UKNKU8H1O0B2OT308I5J3', '9653541637', 5500, 'NotStarted', 'Алгоритмика', 204, '2023-09-22 15:30:48.506', '2023-09-22 15:30:48.506');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('d016acc5-730d-4e71-a03d-ded10bb20fdc'::uuid, 'AD10004LUJG3F8R98CKAQMTR39E1O51J', '9165948689', 5500, 'NotStarted', 'Алгоритмика', 70, '2023-09-22 15:44:18.623', '2023-09-22 15:44:18.623');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('269c6ca6-66b5-40ce-8335-0a56b8433c51'::uuid, 'AD10004RCQBH9OV09MU87G0H7ETS2KHG', '9035330401', 3750, 'NotStarted', 'Дарья', 30, '2023-09-23 06:55:57.110', '2023-09-23 06:55:57.110');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('eeccc4c5-63ec-4d73-baf3-4cce3774700c'::uuid, 'AD10001E79V43S0Q9RSQJP3AMUB7L99I', '9645516347', 3750, 'NotStarted', 'Дарья', 18, '2023-09-23 07:06:11.853', '2023-09-23 07:06:11.853');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('60b164cb-1a86-45cb-8941-fdd061c8cc20'::uuid, 'AD10005280JB8T7L9IB9LS8A1JL6M6NG', '9161178281', 4718, 'NotStarted', 'Дарья', 199, '2023-09-23 08:48:08.204', '2023-09-23 08:48:08.204');
+INSERT INTO qr
+(id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
+VALUES('19e15706-868d-48a8-aa42-12996be218bb'::uuid, 'AD100009MMD8TE0C8FFAEHQ8JVALRJJR', '9299304173', 5550, 'NotStarted', 'Дарья', 201, '2023-09-23 13:08:44.054', '2023-09-23 13:08:44.054');

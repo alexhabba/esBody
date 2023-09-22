@@ -591,3 +591,7 @@ VALUES(202, 'Дубна', 'Юнити', 'Федоров Алексей сын', 
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(203, 'Раменское', 'ВП', 'Елисей Моногаров', 'Елена Моногарова', '9295074606');
+
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, phone)
+VALUES(204, 'Москва', 'Юнити', 'Лена Медведева', 'Вероника', '9653541637');

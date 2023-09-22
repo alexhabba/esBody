@@ -3,8 +3,8 @@ package com.logicaScoolBot.entity;
 import lombok.Data;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
@@ -21,7 +21,10 @@ public class TelegramUser {
 
     private String userName;
 
-    private String city;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private boolean isSendButtonStartWork;
 
     private Timestamp registeredAt;
 

@@ -1,14 +1,17 @@
 package com.logicaScoolBot.bot;
 
 import com.logicaScoolBot.config.BotConfig;
+import com.logicaScoolBot.entity.AdministratorWorkDay;
 import com.logicaScoolBot.entity.City;
 import com.logicaScoolBot.entity.Consumption;
 import com.logicaScoolBot.entity.Qr;
+import com.logicaScoolBot.entity.Role;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
+import com.logicaScoolBot.service.AdministratorWorkDayService;
 import com.logicaScoolBot.service.ConsumptionService;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
@@ -47,6 +50,13 @@ import static com.logicaScoolBot.entity.City.DUBNA;
 import static com.logicaScoolBot.entity.City.MOSCOW;
 import static com.logicaScoolBot.entity.City.RAMENSKOE;
 import static com.logicaScoolBot.entity.City.VOSKRESENSK;
+import static com.logicaScoolBot.entity.Role.ADMIN;
+import static com.logicaScoolBot.entity.Role.ADMIN_DUBNA;
+import static com.logicaScoolBot.entity.Role.ADMIN_MOSKOW;
+import static com.logicaScoolBot.entity.Role.ADMIN_RAMENSKOE;
+import static com.logicaScoolBot.entity.Role.ADMIN_TEST;
+import static com.logicaScoolBot.entity.Role.ADMIN_VOSKRESENSK;
+import static com.logicaScoolBot.entity.Role.SUPER_ADMIN;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -56,15 +66,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
     private static final String ADD_NEW_STUDENT = "Добавление нового ученика";
+    private static final String STARTED_WORK = "Приступил к работе";
 
     private static final String KRISTINA = "Kristina";
     private static final String ALEX = "Alex";
     private static final String VERONIKA = "VERONIKA";
+
     private final UserRepository userRepository;
     private final BotConfig config;
     private final StudentRepository studentRepository;
     private final QrRepository qrRepository;
     private final ConsumptionService consumptionService;
+    private final AdministratorWorkDayService administratorWorkDayService;
 
     private final Map<String, Long> mapChatId = Map.of(
             KRISTINA, 397009920L,
@@ -77,6 +90,19 @@ public class TelegramBot extends TelegramLongPollingBot {
             "ВОСКРЕСЕНСК", VOSKRESENSK,
             "РАМЕНСКОЕ", RAMENSKOE,
             "ОБЩИЙ", COMMON
+    );
+
+    private final List<Role> ADMIN_STATISTIC_DAYS = List.of(
+            ADMIN_DUBNA,
+            ADMIN_MOSKOW,
+            ADMIN_VOSKRESENSK,
+            ADMIN_RAMENSKOE,
+            ADMIN_TEST
+    );
+
+    private final List<Role> ADMIN_START_WORK = List.of(
+            SUPER_ADMIN,
+            ADMIN
     );
 
     static final String HELP_TEXT = "This bot is created to demonstrate Spring capabilities.\n\n" +
@@ -93,14 +119,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        StudentRepository studentRepository,
-                       SbpService sbpService, QrRepository qrRepository,
-                       ConsumptionService consumptionService) {
+                       SbpService sbpService,
+                       QrRepository qrRepository,
+                       ConsumptionService consumptionService,
+                       AdministratorWorkDayService administratorWorkDayService) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.sbpService = sbpService;
         this.qrRepository = qrRepository;
         this.consumptionService = consumptionService;
+        this.administratorWorkDayService = administratorWorkDayService;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "Добро пожаловать!"));
@@ -168,7 +197,16 @@ public class TelegramBot extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
+            Optional<TelegramUser> byId = userRepository.findById(chatId);
+
+            if (chatId == 5347044474L) {
+                prepareAndSendMessage(chatId, "С этого аккаунта запрещено добавлять учеников и создавать QR");
+                return;
+            }
+
+            // Добавление расходов
             addConsumption(messageText, chatId);
+
             if (messageText.contains("/send") && config.getOwnerId() == chatId) {
                 var textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
                 var users = userRepository.findAll();
@@ -248,6 +286,22 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 "город\n" +
                                 "телефон без 8 и слитно\n" +
                                 "название курса");
+                        break;
+
+                    case STARTED_WORK:
+                        if (byId.isPresent()) {
+                            AdministratorWorkDay administratorWorkDay = AdministratorWorkDay.builder()
+                                    .chatId(chatId)
+                                    .name(byId.get().getFirstName())
+                                    .build();
+                            administratorWorkDayService.createAdministratorWorkDay(administratorWorkDay);
+                            prepareAndSendMessage(chatId, "Отлично!\nХорошего дня!");
+
+                            userRepository.findAll().stream()
+                                    .filter(user -> nonNull(user.getRole()) && ADMIN_START_WORK.contains(user.getRole()))
+                                    .forEach(us -> prepareAndSendMessage(us.getChatId(),
+                                            byId.get().getRole().toString() + " " + byId.get().getFirstName() + " приступил к работе"));
+                        }
                         break;
 
 //                    default:
@@ -332,7 +386,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void startCommandReceived(long chatId, String name) {
 
-
         String answer = EmojiParser.parseToUnicode("Hi, " + name + ", nice to meet you!" + " :blush:");
         log.info("Replied to user " + name);
 
@@ -353,6 +406,31 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         row.add(QR_GENERATE);
         row.add(ADD_NEW_STUDENT);
+
+        keyboardRows.add(row);
+
+        keyboardMarkup.setKeyboard(keyboardRows);
+
+        message.setReplyMarkup(keyboardMarkup);
+
+        executeMessage(message);
+    }
+
+    private void sendButtonStartWork(long chatId, String textToSend) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(textToSend);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow row = new KeyboardRow();
+
+        row.add(QR_GENERATE);
+        row.add(ADD_NEW_STUDENT);
+
+        row.add(STARTED_WORK);
 
         keyboardRows.add(row);
 
@@ -423,6 +501,24 @@ public class TelegramBot extends TelegramLongPollingBot {
                     );
         });
 
+    }
+
+//    @Scheduled(fixedDelay = 1000)
+    public void sendButtonStartWork() {
+        System.out.println("sendButtonStartWork");
+        userRepository.findAll().stream()
+                .filter(user -> {
+                    Role role = user.getRole();
+                    //todo ADMIN_TEST replace ADMIN_STATISTIC_DAYS.contains(role)
+                    return nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork();
+                })
+                .forEach(user -> {
+                    sendButtonStartWork(user.getChatId(),
+                            "ВАЖНО!!!\nДобавлена кнопка \"" + STARTED_WORK + "\"," +
+                                    " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.");
+                    user.setSendButtonStartWork(true);
+                    userRepository.save(user);
+                });
     }
 
     private String getFormatNumber(int number) {
