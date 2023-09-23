@@ -203,19 +203,11 @@ INSERT INTO qr
 (id, qrc_id, purpose, amount, status, student_id, create_date, update_date)
 VALUES('5f535aa3-3cfb-4db7-a444-964411aa41cf'::uuid, 'AD10003EILE64V2D8HT99E860MBOO5OR', '9651538445', 5550, 'Accepted', 181, '2023-09-14 16:14:56.831', '2023-09-14 16:17:01.234');
 INSERT INTO qr
-(id, qrc_id, purpose, amount, status, student_id, create_date, update_date)
-VALUES('50ad634b-d8e1-4ab6-bd68-5b969b80b9ba'::uuid, 'AD10000M6FLR4AIM83U8AA66MR3T966E', '9267375141', 5500, 'NotStarted', 182, '2023-09-14 17:10:39.750', '2023-09-14 17:10:39.750');
-INSERT INTO qr
-(id, qrc_id, purpose, amount, status, student_id, create_date, update_date)
-VALUES('522e6a22-1b90-4a27-9c28-02efc9f3c03e'::uuid, 'AD10003OHCVEVV8F8QQRJT8QC8GUHCDE', '9778703387', 5500, 'NotStarted', 65, '2023-09-15 06:15:15.157', '2023-09-15 06:15:15.157');
-
-INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
 VALUES('7870c442-48e0-4ed1-a499-6a2803677cc9'::uuid, 'AD10001MN87UKNKU8H1O0B2OT308I5J3', '9653541637', 5500, 'NotStarted', 'Алгоритмика', 204, '2023-09-22 15:30:48.506', '2023-09-22 15:30:48.506');
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
 VALUES('d016acc5-730d-4e71-a03d-ded10bb20fdc'::uuid, 'AD10004LUJG3F8R98CKAQMTR39E1O51J', '9165948689', 5500, 'NotStarted', 'Алгоритмика', 70, '2023-09-22 15:44:18.623', '2023-09-22 15:44:18.623');
-
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, update_date)
 VALUES('7870c442-48e0-4ed1-a499-6a2803677cc9'::uuid, 'AD10001MN87UKNKU8H1O0B2OT308I5J3', '9653541637', 5500, 'NotStarted', 'Алгоритмика', 204, '2023-09-22 15:30:48.506', '2023-09-22 15:30:48.506');
