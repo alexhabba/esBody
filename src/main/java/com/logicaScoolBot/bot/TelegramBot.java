@@ -258,26 +258,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     case "/start":
 
                         registerUser(update.getMessage());
-                        startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                        break;
-
-                    case "/start@LogicaScoolBot":
-
-                        registerUser(update.getMessage());
-                        startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                        break;
-
-                    case "/help":
-
-                        prepareAndSendMessage(chatId, HELP_TEXT);
-                        break;
-
-                    case "/register":
-
-                        register(chatId);
                         break;
                     case ADD_NEW_STUDENT:
-
                         prepareAndSendMessage(chatId, "Для добавления нового ученика," +
                                 " необходимо отправить сообщение по шаблону:\n\n" +
                                 ADD_NEW_STUDENT + "\n" +
@@ -287,7 +269,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                                 "телефон без 8 и слитно\n" +
                                 "название курса");
                         break;
-
                     case STARTED_WORK:
                         if (byId.isPresent() && nonNull(byId.get().getRole()) && ADMIN_STATISTIC_DAYS.contains(byId.get().getRole())) {
                             AdministratorWorkDay administratorWorkDay = AdministratorWorkDay.builder()
@@ -303,11 +284,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                                             byId.get().getRole().toString() + " " + byId.get().getFirstName() + " приступил к работе"));
                         }
                         break;
-
-//                    default:
-//
-//                        prepareAndSendMessage(chatId, "Sorry, command was not recognized");
-
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -381,7 +357,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             telegramUser.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
 
             userRepository.save(telegramUser);
-            log.info("user saved: " + telegramUser);
+            startCommandReceived(chatId, chat.getFirstName());
+
         } else {
             sendButtonStartWork(byId.get());
         }
