@@ -27,9 +27,8 @@ cron:
   scheduler: 0 */5 * * * *
   job:
     statisticEveryDay: 0 59 20 * * *
-    statusQr: 0,30 * * * * *
+    statusQr: 0/2 * * * * *
     delete_qr: 0 59 20 * * *
-
 
 management:
   endpoints.web.exposure.include: 'prometheus, health'
