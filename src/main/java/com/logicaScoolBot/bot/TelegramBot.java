@@ -289,7 +289,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         break;
 
                     case STARTED_WORK:
-                        if (byId.isPresent() && nonNull(byId.get().getRole()) && ADMIN_START_WORK.contains(byId.get().getRole())) {
+                        if (byId.isPresent() && nonNull(byId.get().getRole()) && ADMIN_STATISTIC_DAYS.contains(byId.get().getRole())) {
                             AdministratorWorkDay administratorWorkDay = AdministratorWorkDay.builder()
                                     .chatId(chatId)
                                     .name(byId.get().getFirstName())
