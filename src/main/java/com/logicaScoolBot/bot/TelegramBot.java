@@ -366,7 +366,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void registerUser(Message msg) {
 
-        if (userRepository.findById(msg.getChatId()).isEmpty()) {
+        Optional<TelegramUser> byId = userRepository.findById(msg.getChatId());
+        if (byId.isEmpty()) {
 
             var chatId = msg.getChatId();
             var chat = msg.getChat();
@@ -381,6 +382,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             userRepository.save(telegramUser);
             log.info("user saved: " + telegramUser);
+        } else {
+            sendButtonStartWork(byId.get());
         }
     }
 
@@ -502,21 +505,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-//    @Scheduled(fixedDelay = 1000)
-    public void sendButtonStartWork() {
-        System.out.println("sendButtonStartWork");
-        userRepository.findAll().stream()
-                .filter(user -> {
-                    Role role = user.getRole();
-                    return nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork();
-                })
-                .forEach(user -> {
-                    sendButtonStartWork(user.getChatId(),
-                            "ВАЖНО!!!\nДобавлена кнопка \"" + STARTED_WORK + "\"," +
-                                    " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.");
-                    user.setSendButtonStartWork(true);
-                    userRepository.save(user);
-                });
+    private void sendButtonStartWork(TelegramUser user) {
+        Role role = user.getRole();
+        if (nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork()) {
+            sendButtonStartWork(user.getChatId(),
+                    "ВАЖНО!!!\nДобавлена кнопка \"" + STARTED_WORK + "\"," +
+                            " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.");
+            user.setSendButtonStartWork(true);
+            userRepository.save(user);
+        }
     }
 
     private String getFormatNumber(int number) {

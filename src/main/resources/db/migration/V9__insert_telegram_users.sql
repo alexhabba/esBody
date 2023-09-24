@@ -24,7 +24,7 @@ INSERT INTO telegram_user
 VALUES(5142290835, 'Альбина', 'Ф.', '2023-09-05 14:24:00.644', 'Albina_13_09', 'ADMIN_VOSKRESENSK');
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name, role)
-VALUES(1281122193, 'Мышка', NULL, '2023-09-06 07:12:27.871', 'mous_sss', 'ADMIN_VOSKRESENSK');
+VALUES(1281122193, 'Полина', NULL, '2023-09-06 07:12:27.871', 'mous_sss', 'ADMIN_VOSKRESENSK');
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name, role)
 VALUES(5586477666, 'Дарья', NULL, '2023-09-07 07:23:04.630', 'NightSilenceWalker', 'ADMIN_DUBNA');
