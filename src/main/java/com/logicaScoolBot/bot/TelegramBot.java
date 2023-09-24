@@ -289,7 +289,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         break;
 
                     case STARTED_WORK:
-                        if (byId.isPresent()) {
+                        if (byId.isPresent() && nonNull(byId.get().getRole()) && ADMIN_START_WORK.contains(byId.get().getRole())) {
                             AdministratorWorkDay administratorWorkDay = AdministratorWorkDay.builder()
                                     .chatId(chatId)
                                     .name(byId.get().getFirstName())
@@ -497,8 +497,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + student.toString();
             userRepository.findAll().stream()
                     .map(TelegramUser::getChatId)
-                    .forEach(chatId -> prepareAndSendMessage(chatId, textMessage)
-                    );
+                    .forEach(chatId -> prepareAndSendMessage(chatId, textMessage));
         });
 
     }
@@ -509,7 +508,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         userRepository.findAll().stream()
                 .filter(user -> {
                     Role role = user.getRole();
-                    //todo ADMIN_TEST replace ADMIN_STATISTIC_DAYS.contains(role)
                     return nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork();
                 })
                 .forEach(user -> {
