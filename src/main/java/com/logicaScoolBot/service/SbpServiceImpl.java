@@ -50,44 +50,54 @@ public class SbpServiceImpl implements SbpService {
     @Override
     @Transactional
     public String registerQr(int amount, String purpose, String nameAdder) {
-        RequestQrRegistrationDto requestQrRegistrationDto = createRequestQrRegistrationDto(amount, purpose);
-        HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(requestQrRegistrationDto, headers);
-        Object body = restTemplate.exchange(URI_REGISTER_QR, HttpMethod.POST, entity, Object.class).getBody();
-        LinkedHashMap<String, LinkedHashMap<String, String>> res = (LinkedHashMap<String, LinkedHashMap<String, String>>) body;
-        LinkedHashMap<String, String> data = res.get("Data");
-        String qrcId = data.get("qrcId");
-        String payload = data.get("payload");
-        Student student = studentRepository.findStudentByPhone(purpose);
-        if (isNull(student)) {
-            return "Нет клиента с таким номером";
-        }
-        Qr qr = Qr.builder()
-                .qrcId(qrcId)
-                .status(QrStatus.NotStarted)
-                .amount(amount / 100)
-                .purpose(purpose)
-                .nameAdder(nameAdder)
-                .student(student)
-                .build();
-        student.getQrc().add(qr);
+        try {
+            RequestQrRegistrationDto requestQrRegistrationDto = createRequestQrRegistrationDto(amount, purpose);
+            HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(requestQrRegistrationDto, headers);
+            Object body = restTemplate.exchange(URI_REGISTER_QR, HttpMethod.POST, entity, Object.class).getBody();
+            LinkedHashMap<String, LinkedHashMap<String, String>> res = (LinkedHashMap<String, LinkedHashMap<String, String>>) body;
+            LinkedHashMap<String, String> data = res.get("Data");
+            String qrcId = data.get("qrcId");
+            String payload = data.get("payload");
+            Student student = studentRepository.findStudentByPhone(purpose);
+            if (isNull(student)) {
+                return "Нет клиента с таким номером";
+            }
+            Qr qr = Qr.builder()
+                    .qrcId(qrcId)
+                    .status(QrStatus.NotStarted)
+                    .amount(amount / 100)
+                    .purpose(purpose)
+                    .nameAdder(nameAdder)
+                    .student(student)
+                    .build();
+            student.getQrc().add(qr);
 
-        studentRepository.saveAndFlush(student);
-        return payload;
+            studentRepository.saveAndFlush(student);
+            return payload;
+        } catch (Exception ex) {
+            System.out.println("Ошибка SbpServiceImpl.registerQr");
+            return null;
+        }
     }
 
     @Override
     @Timed("getQrStatus")
     public List<String> getQrStatus(List<String> qrcIdNotStartedList) {
-        String qrsString = String.join(",", qrcIdNotStartedList);
-        HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(headers);
-        Object body = restTemplate.exchange(URI_GET_QRC_STATUS.replace("qrcId", qrsString), HttpMethod.GET, entity, Object.class).getBody();
-        LinkedHashMap<String, LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>>> res = (LinkedHashMap<String, LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>>>) body;
-        LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>> data = res.get("Data");
-        ArrayList<LinkedHashMap<String, String>> data1 = data.get("paymentList");
-        return data1.stream()
-                .filter(el -> QrStatus.Accepted.name().equals(el.get("status")))
-                .map(el -> el.get("qrcId"))
-                .collect(Collectors.toList());
+        try {
+            String qrsString = String.join(",", qrcIdNotStartedList);
+            HttpEntity<RequestQrRegistrationDto> entity = new HttpEntity<>(headers);
+            Object body = restTemplate.exchange(URI_GET_QRC_STATUS.replace("qrcId", qrsString), HttpMethod.GET, entity, Object.class).getBody();
+            LinkedHashMap<String, LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>>> res = (LinkedHashMap<String, LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>>>) body;
+            LinkedHashMap<String, ArrayList<LinkedHashMap<String, String>>> data = res.get("Data");
+            ArrayList<LinkedHashMap<String, String>> data1 = data.get("paymentList");
+            return data1.stream()
+                    .filter(el -> QrStatus.Accepted.name().equals(el.get("status")))
+                    .map(el -> el.get("qrcId"))
+                    .collect(Collectors.toList());
+        } catch (Exception ex) {
+            System.out.println("Ошибка SbpServiceImpl.getQrStatus");
+            return List.of();
+        }
     }
 
     private RequestQrRegistrationDto createRequestQrRegistrationDto(int amount, String purpose) {
@@ -118,6 +128,7 @@ public class SbpServiceImpl implements SbpService {
 
             return qrsNotStartedStatuses;
         } catch (Exception ex) {
+            System.out.println("Ошибка SbpServiceImpl.statusQr");
             return List.of();
         }
     }
