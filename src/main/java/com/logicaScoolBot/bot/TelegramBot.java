@@ -17,6 +17,7 @@ import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
 import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -164,10 +165,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                     prepareAndSendMessage(chatId, "Не указан город");
                     throw new RuntimeException();
                 }
+
                 Consumption build = Consumption.builder()
                         .amount(amount)
                         .city(MAP_CITY.get(anyCity.get().toUpperCase()))
-                        .description(messageText)
+                        .description(getDescription(messageText, list, amount))
                         .build();
 
                 consumptionService.save(build);
@@ -182,6 +184,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         }
 
+    }
+
+    @NotNull
+    private String getDescription(String messageText, List<String> list, long amount) {
+        return messageText
+                .replace(Long.toString(amount), "")
+                .replace(list.stream()
+                        .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
+                        .findAny().get(), "")
+                .trim();
     }
 
     @Override
@@ -463,6 +475,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Timed("statusQr")
     @Scheduled(cron = "${cron.job.statusQr}")
     public void statusQr() {
+//        System.out.println("statusQr");
         List<String> list = sbpService.statusQr();
         List<Qr> qrs = sbpService.getAllByQrId(list);
 
@@ -473,7 +486,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     .map(TelegramUser::getChatId)
                     .forEach(chatId -> prepareAndSendMessage(chatId, textMessage));
         });
-
+//        prepareAndSendMessage(mapChatId.get(ALEX), "hello");
     }
 
     private void sendButtonStartWork(TelegramUser user) {

@@ -595,3 +595,13 @@ VALUES(203, 'Раменское', 'ВП', 'Елисей Моногаров', 'Е
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
 VALUES(204, 'Москва', 'Юнити', 'Лена Медведева', 'Вероника', '9653541637');
+
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, name_adder, phone)
+VALUES(205, 'Дубна', 'Питон старт', 'Трапезников Арсений', 'Трапезникова Анастасия', 'Аня', '9055155567');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, name_adder, phone)
+VALUES(206, 'Москва', 'ВБ', 'Аделина Хусаинова', 'Юлия', 'Аня (не Анна)', '9651938986');
+INSERT INTO student
+(id, city, course, full_name_child, full_name_parent, name_adder, phone)
+VALUES(207, 'Москва', 'Питон Старт', 'Егор Цырюльников', 'Татьяна', 'Olga', '9263917232');
