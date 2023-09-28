@@ -21,6 +21,9 @@ public interface QrRepository extends JpaRepository<Qr, UUID> {
     @Query("select qr from Qr qr where qr.qrcId in (:qrsIdList)")
     List<Qr> findAllByQrId(List<String> qrsIdList);
 
+    @Query("select qr from Qr qr where qr.isSend = false and qr.status = 'Accepted'")
+    List<Qr> findAllByNotSend();
+
     @Modifying
     @Query("delete from Qr q where q.createDate < :dateTime and q.status = 'NotStarted'")
     void deleteQr(@Param("dateTime") LocalDateTime dateTime);

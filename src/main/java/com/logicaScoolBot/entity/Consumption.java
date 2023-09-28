@@ -37,6 +37,8 @@ public class Consumption {
 
     private long amount;
 
+    private boolean isSend;
+
     @Enumerated(EnumType.STRING)
     private City city;
 

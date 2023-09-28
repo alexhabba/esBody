@@ -37,6 +37,8 @@ public class Student {
 
     private String nameAdder;
 
+    private boolean isSend;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Qr> qrc;
 

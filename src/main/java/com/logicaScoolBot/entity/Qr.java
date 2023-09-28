@@ -43,6 +43,8 @@ public class Qr {
 
     private String nameAdder;
 
+    private boolean isSend;
+
     @CreationTimestamp
     private LocalDateTime createDate;
 

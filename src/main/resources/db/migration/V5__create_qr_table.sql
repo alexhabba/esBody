@@ -8,6 +8,7 @@ CREATE TABLE qr
     name_adder  varchar(20)  NULL,
     student_id  int8         NOT NULL,
     create_date timestamp    NOT NULL,
+    is_send     boolean      NOT NULL DEFAULT false,
     CONSTRAINT qr_pkey PRIMARY KEY (id),
     CONSTRAINT student_qr_fk FOREIGN KEY (student_id) REFERENCES student (id)
 );

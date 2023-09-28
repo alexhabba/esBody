@@ -31,6 +31,8 @@ public class AdministratorWorkDay {
 
     private String name;
 
+    private boolean isSend;
+
     @CreationTimestamp
     private LocalDateTime createDate;
 }
