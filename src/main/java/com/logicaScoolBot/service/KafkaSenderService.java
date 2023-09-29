@@ -4,5 +4,5 @@ import com.logicaScoolBot.dto.kafka.KafkaEvent;
 
 public interface KafkaSenderService {
 
-    void send(KafkaEvent event);
+    void send(KafkaEvent event, String topic);
 }

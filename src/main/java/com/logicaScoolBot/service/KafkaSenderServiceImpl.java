@@ -37,8 +37,8 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
     private final ConsumptionMapper consumptionMapper;
 
     @Override
-    public void send(KafkaEvent event) {
-        kafkaProducer.send(event, "topic_test");
+    public void send(KafkaEvent event, String topic) {
+        kafkaProducer.send(event, topic);
     }
 
     @Scheduled(cron = "${cron.job.replica}")
@@ -57,7 +57,7 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
         List<Student> students = studentRepository.findAllByNotSend();
         students.stream()
                 .map(studentMapper::toDto)
-                .forEach(this::send);
+                .forEach(s -> send(s, "topStudent"));
         students.forEach(s -> {
             s.setSend(true);
         });
@@ -68,7 +68,7 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
         List<Qr> qrc = qrRepository.findAllByNotSend();
         qrc.stream()
                 .map(qrMapper::toDto)
-                .forEach(this::send);
+                .forEach(qr -> send(qr, "topQr"));
         qrc.forEach(s -> {
             s.setSend(true);
         });
@@ -79,7 +79,7 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
         List<AdministratorWorkDay> administratorWorkDays = administratorWorkDayRepository.findAllByNotSend();
         administratorWorkDays.stream()
                 .map(administratorWorkDayMapper::toDto)
-                .forEach(this::send);
+                .forEach(administratorWorkDay -> send(administratorWorkDay, "topAdministratorWorkDay"));
         administratorWorkDays.forEach(s -> {
             s.setSend(true);
         });
@@ -90,7 +90,7 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
         List<Consumption> consumptions = consumptionRepository.findAllByNotSend();
         consumptions.stream()
                 .map(consumptionMapper::toDto)
-                .forEach(this::send);
+                .forEach(s -> send(s, "topConsumption"));
         consumptions.forEach(s -> {
             s.setSend(true);
         });

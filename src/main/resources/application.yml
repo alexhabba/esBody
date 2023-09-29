@@ -29,7 +29,7 @@ spring:
             add:
               type:
                 headers: false
-    topicName: topic_replica
+    topicName: top1
 
 bot:
   name: LogicaScol
@@ -41,7 +41,7 @@ cron:
   scheduler: 0 */5 * * * *
   job:
     statisticEveryDay: 0 59 20 * * *
-    statusQr: 13 * * * * *
+    statusQr: 13 */5 * * * *
     delete_qr: 0 59 20 * * *
     replica: 13 13 * * * *
 

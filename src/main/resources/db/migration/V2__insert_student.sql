@@ -30,9 +30,6 @@ INSERT INTO student
 VALUES(11, 'Дубна', NULL, 'Коляка Яна', 'Елена', '9014640374');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
-VALUES(12, 'Дубна', NULL, 'Магалан Виктория', 'Аида', '9801862020');
-INSERT INTO student
-(id, city, course, full_name_child, full_name_parent, phone)
 VALUES(13, 'Дубна', NULL, 'Нидэнс Алекс', 'Аида', '9801862020');
 INSERT INTO student
 (id, city, course, full_name_child, full_name_parent, phone)
