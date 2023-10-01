@@ -2,7 +2,7 @@ CREATE TABLE consumption
 (
     id          uuid         NOT NULL,
     amount      int8         NOT NULL,
-    description varchar(200) NOT NULL,
+    description varchar(2000) NOT NULL,
     city        varchar(20)  NULL,
     create_date timestamp    NOT NULL,
     is_send     boolean      NOT NULL DEFAULT false,
