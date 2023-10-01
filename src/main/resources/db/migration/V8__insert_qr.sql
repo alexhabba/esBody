@@ -3,7 +3,7 @@ INSERT INTO qr
 VALUES('fa04df9f-2dbf-4842-9981-2b4045d70a6d'::uuid, 'AD100028E17V15VT9O1Q5AK8VSNPG2UO', '9036947318', 5550, 'Accepted', 'Аня', 208, '2023-09-29 09:39:13.779', false, '2023-09-29 10:13:13.265');
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, is_send, update_date)
-VALUES('433dd090-e92c-4783-a60a-faedad83f3a1'::uuid, 'AD10001T29CKV1GP8Q7RNSDS70FDJIGD', '9250503385', 5000, 'NotStarted', 'Аня', 211, '2023-09-29 13:22:53.178', false, '2023-09-29 13:22:53.178');
+VALUES('433dd090-e92c-4783-a60a-faedad83f3a1'::uuid, 'AD10001T29CKV1GP8Q7RNSDS70FDJIGD', '9250503385', 5000, 'Accepted', 'Аня', 211, '2023-09-29 13:22:53.178', false, '2023-09-29 13:22:53.178');
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, is_send, update_date)
 VALUES('012b07d8-11b8-43c0-9029-c463e5d1c689'::uuid, 'AD100026IP0P7UAU9D2RJI7I9P7A0VU2', '9801862020', 5000, 'NotStarted', 'Аня', 13, '2023-09-28 12:24:03.595', false, '2023-09-28 12:24:03.595');
@@ -165,7 +165,7 @@ INSERT INTO qr
 VALUES('6488d303-250a-444d-bc76-e5ac00cd950f'::uuid, 'AD10007MD8RH9C2K9KCRBRKHP218K32K', '9778128234', 4080, 'Accepted', 'Олеся', 151, '2023-09-28 13:03:10.868', false, '2023-09-28 19:13:13.520');
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, is_send, update_date)
-VALUES('0695a42d-7068-49f1-bfc0-37d6ea513f5c'::uuid, 'AD10002MFNBLFGJU87NOL4PKH0B7PAL3', '9169915170', 5450, 'NotStarted', 'Ma', 210, '2023-09-29 12:37:57.208', false, '2023-09-29 12:37:57.208');
+VALUES('0695a42d-7068-49f1-bfc0-37d6ea513f5c'::uuid, 'AD10002MFNBLFGJU87NOL4PKH0B7PAL3', '9169915170', 5450, 'Accepted', 'Ma', 210, '2023-09-29 12:37:57.208', false, '2023-09-29 12:37:57.208');
 INSERT INTO qr
 (id, qrc_id, purpose, amount, status, name_adder, student_id, create_date, is_send, update_date)
 VALUES('f64bbaff-cba6-47f6-ae85-314072063da4'::uuid, 'AD10002CI7C99SAE9IKARM1N34Q1K9FU', '9161786920', 5000, 'NotStarted', 'Аня', 212, '2023-09-29 15:19:56.488', false, '2023-09-29 15:19:56.488');

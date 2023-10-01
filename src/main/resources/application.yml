@@ -43,7 +43,8 @@ cron:
     statisticEveryDay: 0 59 20 * * *
     statusQr: 13 */5 * * * *
     delete_qr: 0 59 20 * * *
-    replica: 13 13 * * * *
+#    replica: 13 13 * * * *
+    replica: 13 * * * * *
 
 management:
   endpoints.web.exposure.include: 'prometheus, health'
@@ -54,3 +55,6 @@ management:
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
+
+server:
+  port: 8888
