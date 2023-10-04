@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -20,6 +22,7 @@ public class StudentDto implements KafkaEvent {
     private String city;
     private String course;
     private String nameAdder;
+    private LocalDateTime createDate;
     private boolean isSend;
 
 }

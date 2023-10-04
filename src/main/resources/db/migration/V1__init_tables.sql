@@ -7,6 +7,7 @@ CREATE TABLE student
     full_name_parent varchar(50) NULL,
     name_adder       varchar(20) NULL,
     phone            varchar(11) NULL,
+    create_date      timestamp   NULL,
     is_send          boolean     NOT NULL DEFAULT false,
     CONSTRAINT student_pkey PRIMARY KEY (id)
 );

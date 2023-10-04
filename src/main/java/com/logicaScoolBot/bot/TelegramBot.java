@@ -174,6 +174,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 consumptionService.save(build);
                 prepareAndSendMessage(chatId, "Расход добавлен");
+                Long chatId2 = mapChatId.values().stream()
+                        .filter(c -> !c.equals(chatId))
+                        .findFirst().get();
+                prepareAndSendMessage(chatId2, "Добавлен расход\n" + messageText);
                 throw new RuntimeException();
             } catch (NumberFormatException ex) {
                 if (anyCity.isPresent()) {

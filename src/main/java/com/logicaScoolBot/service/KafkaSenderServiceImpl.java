@@ -41,7 +41,7 @@ public class KafkaSenderServiceImpl implements KafkaSenderService {
         kafkaProducer.send(event, topic);
     }
 
-    @Scheduled(cron = "${cron.job.replica}")
+//    @Scheduled(cron = "${cron.job.replica}")
     public void taskReplication() {
 
         replicationStudent();

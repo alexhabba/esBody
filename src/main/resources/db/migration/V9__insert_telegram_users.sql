@@ -46,3 +46,7 @@ VALUES(848726370, 'Olga', NULL, '2023-09-26 09:04:17.225', 'Ivolgaeg', 'ADMIN_MO
 INSERT INTO telegram_user
 (chat_id, first_name, last_name, registered_at, user_name, "role", is_send_button_start_work)
 VALUES(6238246042, 'Александра', 'Мишуто', '2023-09-26 12:09:32.181', NULL, 'ADMIN_RAMENSKOE', true);
+INSERT INTO telegram_user
+(chat_id, first_name, last_name, registered_at, user_name, "role", is_send_button_start_work)
+VALUES(1126534988, 'Елизавета', NULL, '2023-10-03 14:23:02.673', 'antichnostb', 'ADMIN_MOSKOW', true);
+
