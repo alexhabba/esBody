@@ -1,7 +1,6 @@
 package com.logicaScoolBot.repository;
 
 import com.logicaScoolBot.entity.AdministratorWorkDay;
-import com.logicaScoolBot.entity.Qr;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
