@@ -4,5 +4,5 @@ import com.logicaScoolBot.entity.AdministratorWorkDay;
 
 public interface AdministratorWorkDayService {
 
-    AdministratorWorkDay createAdministratorWorkDay(AdministratorWorkDay entity);
+    String createAdministratorWorkDay(AdministratorWorkDay entity);
 }

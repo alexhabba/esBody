@@ -58,6 +58,7 @@ import static com.logicaScoolBot.entity.Role.ADMIN_RAMENSKOE;
 import static com.logicaScoolBot.entity.Role.ADMIN_TEST;
 import static com.logicaScoolBot.entity.Role.ADMIN_VOSKRESENSK;
 import static com.logicaScoolBot.entity.Role.SUPER_ADMIN;
+import static com.logicaScoolBot.service.AdministratorWorkDayServiceImpl.REPEAT_CLICK;
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -285,13 +286,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                                     .chatId(chatId)
                                     .name(byId.get().getFirstName())
                                     .build();
-                            administratorWorkDayService.createAdministratorWorkDay(administratorWorkDay);
-                            prepareAndSendMessage(chatId, "Отлично!\nХорошего дня!");
+                            String result = administratorWorkDayService.createAdministratorWorkDay(administratorWorkDay);
+                            prepareAndSendMessage(chatId, result);
 
-                            userRepository.findAll().stream()
-                                    .filter(user -> nonNull(user.getRole()) && ADMIN_START_WORK.contains(user.getRole()))
-                                    .forEach(us -> prepareAndSendMessage(us.getChatId(),
-                                            byId.get().getRole().toString() + " " + byId.get().getFirstName() + " приступил к работе"));
+                            if (!REPEAT_CLICK.equals(result)) {
+                                userRepository.findAll().stream()
+                                        .filter(user -> nonNull(user.getRole()) && ADMIN_START_WORK.contains(user.getRole()))
+                                        .forEach(us -> prepareAndSendMessage(us.getChatId(),
+                                                byId.get().getRole().toString() + " " + byId.get().getFirstName() + " приступил к работе"));
+                            }
                         }
                         break;
                 }
