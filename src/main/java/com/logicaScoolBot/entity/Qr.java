@@ -48,7 +48,6 @@ public class Qr {
     @CreationTimestamp
     private LocalDateTime createDate;
 
-    @UpdateTimestamp
     private LocalDateTime updateDate;
 
     @ManyToOne
