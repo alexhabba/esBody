@@ -20,7 +20,10 @@ CREATE TABLE telegram_user
     registered_at             timestamp   NULL,
     user_name                 varchar(30) NULL,
     "role"                    varchar(20) NULL,
+    phone                     varchar(30) NULL,
+    bank                      varchar(30) NULL,
     is_send_button_start_work boolean     NOT NULL DEFAULT false,
+    is_send                   boolean     NOT NULL DEFAULT false,
     CONSTRAINT telegram_user_pkey PRIMARY KEY (chat_id)
 );
 
@@ -42,12 +45,12 @@ CREATE TABLE qr
 
 CREATE TABLE consumption
 (
-    id          uuid         NOT NULL,
-    amount      int8         NOT NULL,
+    id          uuid          NOT NULL,
+    amount      int8          NOT NULL,
     description varchar(2000) NOT NULL,
-    city        varchar(20)  NULL,
-    create_date timestamp    NOT NULL,
-    is_send     boolean      NOT NULL DEFAULT false,
+    city        varchar(20)   NULL,
+    create_date timestamp     NOT NULL,
+    is_send     boolean       NOT NULL DEFAULT false,
     CONSTRAINT consumption_pkey PRIMARY KEY (id)
 );
 
@@ -59,4 +62,15 @@ CREATE TABLE administrator_work_day
     chat_id     int8        NOT NULL,
     is_send     boolean     NOT NULL DEFAULT false,
     CONSTRAINT administrator_work_day_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE salary
+(
+    id          uuid        NOT NULL,
+    amount      int4        NOT NULL,
+    description varchar(30) NULL,
+    chat_id     int8        NOT NULL,
+    create_date timestamp   NOT NULL,
+    is_send     boolean     NOT NULL DEFAULT false,
+    CONSTRAINT salary_pkey PRIMARY KEY (id)
 );

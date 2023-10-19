@@ -24,6 +24,15 @@ public class TelegramUser {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String phone;
+
+    private String bank;
+
+    private boolean isSend;
+
+    /**
+     * Признак отправки в кафку
+     */
     private boolean isSendButtonStartWork;
 
     private Timestamp registeredAt;

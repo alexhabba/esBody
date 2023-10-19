@@ -1,6 +1,6 @@
 package com.logicaScoolBot.entity;
 
-public enum Role {
+public enum Course {
     SUPER_ADMIN,
     ADMIN,
     ADMIN_DUBNA,
