@@ -469,12 +469,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         Integer amountSumMonth = qrRepository.getAmountSumToMonth(dateTimeMonth);
         String amountMonth = "Сумма оплат за текущий месяц по СБП " + getFormatNumber(amountSumMonth);
 
+        int amountSumMonthConsumption = consumptionService.getAmountMonth(dateTimeMonth);
+        String amountMonthConsumption = "Расход за текущий месяц " + getFormatNumber(amountSumMonthConsumption);
+
         LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay();
         Integer amountSumDay = qrRepository.getAmountSumToDay(dateTimeDay);
         String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(amountSumDay);
 
         mapChatId.forEach((k, v) -> {
             prepareAndSendMessage(v, amountMonth);
+            prepareAndSendMessage(v, amountMonthConsumption);
             prepareAndSendMessage(v, amountDay);
         });
     }
