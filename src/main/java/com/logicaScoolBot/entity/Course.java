@@ -1,8 +1,8 @@
 package com.logicaScoolBot.entity;
 
 public enum Course {
-    SUPER_ADMIN,
-    ADMIN,
+    OLIP,
+    PYTHON,
     ADMIN_DUBNA,
     ADMIN_MOSKOW,
     ADMIN_VOSKRESENSK,

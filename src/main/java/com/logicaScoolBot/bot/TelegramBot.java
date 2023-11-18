@@ -12,6 +12,7 @@ import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.logicaScoolBot.service.AdministratorWorkDayService;
+import com.logicaScoolBot.service.BeenResolver;
 import com.logicaScoolBot.service.ConsumptionService;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
@@ -58,6 +59,11 @@ import static com.logicaScoolBot.entity.Role.ADMIN_RAMENSKOE;
 import static com.logicaScoolBot.entity.Role.ADMIN_TEST;
 import static com.logicaScoolBot.entity.Role.ADMIN_VOSKRESENSK;
 import static com.logicaScoolBot.entity.Role.SUPER_ADMIN;
+import static com.logicaScoolBot.entity.Role.TEACHER_DUBNA;
+import static com.logicaScoolBot.entity.Role.TEACHER_MOSKOW;
+import static com.logicaScoolBot.entity.Role.TEACHER_RAMENSKOE;
+import static com.logicaScoolBot.entity.Role.TEACHER_TEST;
+import static com.logicaScoolBot.entity.Role.TEACHER_VOSKRESENSK;
 import static com.logicaScoolBot.service.AdministratorWorkDayServiceImpl.REPEAT_CLICK;
 import static java.util.Objects.nonNull;
 
@@ -69,6 +75,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private static final String QR_GENERATE = "Сгенерировать QR";
     private static final String ADD_NEW_STUDENT = "Добавление нового ученика";
     private static final String STARTED_WORK = "Приступил к работе";
+    private static final String END_LESSON = "Закончил урок";
 
     private static final String KRISTINA = "Kristina";
     private static final String ALEX = "Alex";
@@ -80,6 +87,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final QrRepository qrRepository;
     private final ConsumptionService consumptionService;
     private final AdministratorWorkDayService administratorWorkDayService;
+    private final BeenResolver beenResolver;
 
     private final Map<String, Long> mapChatId = Map.of(
             KRISTINA, 397009920L,
@@ -102,6 +110,14 @@ public class TelegramBot extends TelegramLongPollingBot {
             ADMIN_TEST
     );
 
+    private final List<Role> TEACHER_ROLES = List.of(
+            TEACHER_DUBNA,
+            TEACHER_MOSKOW,
+            TEACHER_VOSKRESENSK,
+            TEACHER_RAMENSKOE,
+            TEACHER_TEST
+    );
+
     private final List<Role> ADMIN_START_WORK = List.of(
             SUPER_ADMIN,
             ADMIN
@@ -118,7 +134,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                        SbpService sbpService,
                        QrRepository qrRepository,
                        ConsumptionService consumptionService,
-                       AdministratorWorkDayService administratorWorkDayService) {
+                       AdministratorWorkDayService administratorWorkDayService,
+                       BeenResolver beenResolver) {
         this.config = config;
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
@@ -126,6 +143,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.qrRepository = qrRepository;
         this.consumptionService = consumptionService;
         this.administratorWorkDayService = administratorWorkDayService;
+        this.beenResolver = beenResolver;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "Добро пожаловать!"));
@@ -150,61 +168,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         return config.getToken();
     }
 
-    public void addConsumption(String messageText, long chatId) {
-        if (mapChatId.containsValue(chatId)) {
-            List<String> list = Arrays.asList(messageText.split("\\s+"));
-
-            Optional<String> anyCity = list.stream()
-                    .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
-                    .findAny();
-
-            long amount = 0;
-
-            try {
-                amount = Long.parseLong(list.get(0));
-                if (anyCity.isEmpty()) {
-                    prepareAndSendMessage(chatId, "Не указан город");
-                    throw new RuntimeException();
-                }
-
-                Consumption build = Consumption.builder()
-                        .amount(amount)
-                        .city(MAP_CITY.get(anyCity.get().toUpperCase()))
-                        .description(getDescription(messageText, list, amount))
-                        .build();
-
-                consumptionService.save(build);
-                prepareAndSendMessage(chatId, "Расход добавлен");
-                Long chatId2 = mapChatId.values().stream()
-                        .filter(c -> !c.equals(chatId))
-                        .findFirst().get();
-                prepareAndSendMessage(chatId2, "Добавлен расход\n" + messageText);
-                throw new RuntimeException();
-            } catch (NumberFormatException ex) {
-                if (anyCity.isPresent()) {
-                    prepareAndSendMessage(chatId, "для добавления расхода, сначала пишем сумму потом город и на что потрачено");
-                    throw new RuntimeException();
-                }
-            }
-
-        }
-
-    }
-
-    @NotNull
-    private String getDescription(String messageText, List<String> list, long amount) {
-        return messageText
-                .replace(Long.toString(amount), "")
-                .replace(list.stream()
-                        .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
-                        .findAny().get(), "")
-                .trim();
-    }
-
     @Override
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
+            beenResolver.resolve(update);
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -214,9 +182,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 prepareAndSendMessage(chatId, "С этого аккаунта запрещено добавлять учеников и создавать QR");
                 return;
             }
-
-            // Добавление расходов
-            addConsumption(messageText, chatId);
 
             if (messageText.contains("/send") && config.getOwnerId() == chatId) {
                 var textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
@@ -269,6 +234,10 @@ public class TelegramBot extends TelegramLongPollingBot {
                     case "/start":
 
                         registerUser(update.getMessage());
+                        break;
+                    case END_LESSON:
+                        // todo implement logic
+
                         break;
                     case ADD_NEW_STUDENT:
                         prepareAndSendMessage(chatId, "Для добавления нового ученика," +
@@ -382,7 +351,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         String answer = EmojiParser.parseToUnicode("Hi, " + name + ", nice to meet you!" + " :blush:");
         log.info("Replied to user " + name);
 
-
         sendMessage(chatId, answer);
     }
 
@@ -409,7 +377,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-    private void sendButtonStartWork(long chatId, String textToSend) {
+    private void sendButtonStartWork(long chatId, String textToSend, String button) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
@@ -420,10 +388,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         KeyboardRow row = new KeyboardRow();
 
-        row.add(QR_GENERATE);
-        row.add(ADD_NEW_STUDENT);
+        if (END_LESSON.equals(button)) {
+            row.add(button);
+        } else {
+            row.add(QR_GENERATE);
+            row.add(ADD_NEW_STUDENT);
 
-        row.add(STARTED_WORK);
+            row.add(button);
+        }
 
         keyboardRows.add(row);
 
@@ -505,7 +477,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork()) {
             sendButtonStartWork(user.getChatId(),
                     "ВАЖНО!!!\nДобавлена кнопка \"" + STARTED_WORK + "\"," +
-                            " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.");
+                            " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.", STARTED_WORK
+            );
+            user.setSendButtonStartWork(true);
+            userRepository.save(user);
+        } else if (nonNull(role) && TEACHER_ROLES.contains(role) && !user.isSendButtonStartWork()) {
+            sendButtonStartWork(user.getChatId(),
+                    "ВАЖНО!!!\nДобавлена кнопка \"" + END_LESSON + "\"," +
+                            " когда вы закончили урок, необходимо ее нажать для учета ваших уроков.", END_LESSON);
             user.setSendButtonStartWork(true);
             userRepository.save(user);
         }

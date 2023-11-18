@@ -9,16 +9,18 @@ spring:
       ddl-auto: validate
     database: postgresql
   datasource:
-#    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
-    url: jdbc:postgresql://${RDS_HOSTNAME:45.8.251.166}:${RDS_PORT:5433}/${RDS_DB_NAME:postgres}?currentSchema=bot
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}?currentSchema=bot
+#    url: jdbc:postgresql://${RDS_HOSTNAME:45.8.251.166}:${RDS_PORT:5433}/${RDS_DB_NAME:postgres}?currentSchema=bot
 #    url: jdbc:postgresql://${RDS_HOSTNAME:host.docker.internal:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
     username: ${RDS_USERNAME:postgres}
     password: ${RDS_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
     pool-size: 30
+  main:
+    allow-circular-references: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -56,4 +58,4 @@ management:
         "[http.server.requests]": true
 
 server:
-  port: 8888
+  port: 8882

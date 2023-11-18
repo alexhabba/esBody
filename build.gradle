@@ -48,7 +48,7 @@ dependencies {
 }
 
 configurations {
-	all*.exclude module : 'spring-boot-starter-logging'
+//	all*.exclude module : 'spring-boot-starter-logging'
 	all*.exclude module : 'eclipse-collections-api'
 	all*.exclude module : 'eclipse-collections'
 	all*.exclude module : 'eclipse-collections-forkjoin'
