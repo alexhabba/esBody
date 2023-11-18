@@ -1,8 +1,9 @@
 package com.logicaScoolBot.service;
 
 import com.logicaScoolBot.entity.Consumption;
-import com.logicaScoolBot.entity.Role;
+import com.logicaScoolBot.enums.Role;
 import com.logicaScoolBot.entity.TelegramUser;
+import com.logicaScoolBot.exception.HandlerMessageException;
 import com.logicaScoolBot.repository.ConsumptionRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.logicaScoolBot.Constant.MAP_CITY;
+import static com.logicaScoolBot.constnt.Constant.MAP_CITY;
 import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
-public class ConsumptionServiceImpl implements ConsumptionService {
+public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessage {
 
     private final ConsumptionRepository repository;
     private final UserRepository userRepository;
@@ -78,11 +79,11 @@ public class ConsumptionServiceImpl implements ConsumptionService {
                         .findFirst().get();
                 senderService.send(chatId2, "Добавлен расход\n" + update.getMessage().getText());
                 //todo
-                throw new RuntimeException();
+                throw new HandlerMessageException();
             } catch (NumberFormatException ex) {
                 if (anyCity.isPresent()) {
                     senderService.send(update.getMessage().getChatId(), "для добавления расхода, сначала пишем сумму потом город и на что потрачено");
-                    throw new RuntimeException();
+                    throw new HandlerMessageException();
                 }
             }
         }

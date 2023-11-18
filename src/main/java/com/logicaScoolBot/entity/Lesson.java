@@ -1,5 +1,6 @@
 package com.logicaScoolBot.entity;
 
+import com.logicaScoolBot.enums.Course;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

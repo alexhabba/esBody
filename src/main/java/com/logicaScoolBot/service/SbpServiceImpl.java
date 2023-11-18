@@ -3,7 +3,7 @@ package com.logicaScoolBot.service;
 import com.logicaScoolBot.dto.DataDto;
 import com.logicaScoolBot.dto.RequestQrRegistrationDto;
 import com.logicaScoolBot.entity.Qr;
-import com.logicaScoolBot.entity.QrStatus;
+import com.logicaScoolBot.enums.QrStatus;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.repository.QrRepository;
 import com.logicaScoolBot.repository.StudentRepository;

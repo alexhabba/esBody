@@ -1,5 +1,6 @@
 package com.logicaScoolBot.entity;
 
+import com.logicaScoolBot.enums.Role;
 import lombok.Data;
 
 import javax.persistence.Entity;

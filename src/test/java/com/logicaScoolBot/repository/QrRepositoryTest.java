@@ -1,7 +1,7 @@
 package com.logicaScoolBot.repository;
 
 import com.logicaScoolBot.entity.Qr;
-import com.logicaScoolBot.entity.QrStatus;
+import com.logicaScoolBot.enums.QrStatus;
 import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.service.QrServiceImpl;
 import org.junit.jupiter.api.Disabled;

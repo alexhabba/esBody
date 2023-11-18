@@ -1,0 +1,15 @@
+package com.logicaScoolBot.enums;
+
+public enum Course {
+    OLIP,
+    PYTHON,
+    ADMIN_DUBNA,
+    ADMIN_MOSKOW,
+    ADMIN_VOSKRESENSK,
+    ADMIN_RAMENSKOE,
+    ADMIN_TEST,
+    TEACHER_DUBNA,
+    TEACHER_MOSKOW,
+    TEACHER_VOSKRESENSK,
+    TEACHER_RAMENSKOE
+}

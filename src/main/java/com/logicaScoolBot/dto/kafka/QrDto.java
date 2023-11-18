@@ -1,6 +1,6 @@
 package com.logicaScoolBot.dto.kafka;
 
-import com.logicaScoolBot.entity.QrStatus;
+import com.logicaScoolBot.enums.QrStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

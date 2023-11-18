@@ -11,5 +11,4 @@ public interface ConsumptionService {
 
     int getAmountMonth(LocalDateTime dateTime);
 
-    void handle(Update update);
 }
