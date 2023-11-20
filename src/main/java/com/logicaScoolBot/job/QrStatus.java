@@ -34,7 +34,12 @@ public class QrStatus {
             String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + student.toString();
             userRepository.findAll().stream()
                     .map(TelegramUser::getChatId)
-                    .forEach(chatId -> senderService.send(chatId, textMessage));
+                    .forEach(chatId -> {
+                        try {
+                            senderService.send(chatId, textMessage);
+                        } catch (Exception ignore) {
+                        }
+                    });
         });
     }
 }
