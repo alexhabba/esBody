@@ -2,22 +2,14 @@ package com.logicaScoolBot.bot;
 
 import com.logicaScoolBot.config.BotConfig;
 import com.logicaScoolBot.entity.AdministratorWorkDay;
-import com.logicaScoolBot.enums.City;
-import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.enums.Role;
-import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
-import com.logicaScoolBot.repository.QrRepository;
-import com.logicaScoolBot.repository.StudentRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.logicaScoolBot.service.AdministratorWorkDayService;
 import com.logicaScoolBot.service.BeenResolver;
-import com.logicaScoolBot.service.ConsumptionService;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
-import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -34,21 +26,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static com.logicaScoolBot.enums.City.COMMON;
-import static com.logicaScoolBot.enums.City.DUBNA;
-import static com.logicaScoolBot.enums.City.MOSCOW;
-import static com.logicaScoolBot.enums.City.RAMENSKOE;
-import static com.logicaScoolBot.enums.City.VOSKRESENSK;
 import static com.logicaScoolBot.enums.Role.ADMIN;
 import static com.logicaScoolBot.enums.Role.ADMIN_DUBNA;
 import static com.logicaScoolBot.enums.Role.ADMIN_MOSKOW;
@@ -71,9 +52,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
-    private static final String ADD_NEW_STUDENT = "Добавление нового ученика";
-    private static final String STARTED_WORK = "Приступил к работе";
-    private static final String END_LESSON = "Закончил урок";
+    private static final String ADD_NEW_CLIENT = "Добавление нового клиента";
 
     private final UserRepository userRepository;
     private final BotConfig config;
@@ -145,16 +124,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             long chatId = update.getMessage().getChatId();
-            if (chatId == 5347044474L) {
-                prepareAndSendMessage(chatId, "С этого аккаунта запрещено добавлять учеников и создавать QR");
-                return;
-            }
-
             beenResolver.resolve(update);
             String messageText = update.getMessage().getText();
-
-            Optional<TelegramUser> byId = userRepository.findById(chatId);
-
 
             //todo это тут нахрена ???
             if (messageText.contains("/send") && config.getOwnerId() == chatId) {
@@ -169,7 +140,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             "например:\n" +
                             "QR 1000 9273888212");
                 } else if (messageText.startsWith("QR")) {
-                    //todo проверить что соответствует формату "QR 1000 9273888212"
+                    // todo проверить что соответствует формату "QR 1000 9273888212"
                     String[] strArr = messageText.split("\\s+");
                     int amount = Integer.parseInt(strArr[1]) * 100;
                     String purpose = getPhoneFormat(strArr[2]);
@@ -182,28 +153,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     case "/start":
 
                         registerUser(update.getMessage());
-                        break;
-                    case END_LESSON:
-                        // todo implement logic
-
-                        break;
-
-                    case STARTED_WORK:
-                        if (byId.isPresent() && nonNull(byId.get().getRole()) && ADMIN_STATISTIC_DAYS.contains(byId.get().getRole())) {
-                            AdministratorWorkDay administratorWorkDay = AdministratorWorkDay.builder()
-                                    .chatId(chatId)
-                                    .name(byId.get().getFirstName())
-                                    .build();
-                            String result = administratorWorkDayService.createAdministratorWorkDay(administratorWorkDay);
-                            prepareAndSendMessage(chatId, result);
-
-                            if (!REPEAT_CLICK.equals(result)) {
-                                userRepository.findAll().stream()
-                                        .filter(user -> nonNull(user.getRole()) && ADMIN_START_WORK.contains(user.getRole()))
-                                        .forEach(us -> prepareAndSendMessage(us.getChatId(),
-                                                byId.get().getRole().toString() + " " + byId.get().getFirstName() + " приступил к работе"));
-                            }
-                        }
                         break;
                 }
             }
@@ -270,8 +219,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             userRepository.save(telegramUser);
             startCommandReceived(chatId, chat.getFirstName());
-        } else {
-            sendButtonStartWork(byId.get());
         }
     }
 
@@ -295,7 +242,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         KeyboardRow row = new KeyboardRow();
 
         row.add(QR_GENERATE);
-        row.add(ADD_NEW_STUDENT);
+        row.add(ADD_NEW_CLIENT);
 
         keyboardRows.add(row);
 
@@ -317,14 +264,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         KeyboardRow row = new KeyboardRow();
 
-        if (END_LESSON.equals(button)) {
-            row.add(button);
-        } else {
             row.add(QR_GENERATE);
-            row.add(ADD_NEW_STUDENT);
+            row.add(ADD_NEW_CLIENT);
 
             row.add(button);
-        }
 
         keyboardRows.add(row);
 
@@ -361,24 +304,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
         executeMessage(message);
-    }
-
-    private void sendButtonStartWork(TelegramUser user) {
-        Role role = user.getRole();
-        if (nonNull(role) && ADMIN_STATISTIC_DAYS.contains(role) && !user.isSendButtonStartWork()) {
-            sendButtonStartWork(user.getChatId(),
-                    "ВАЖНО!!!\nДобавлена кнопка \"" + STARTED_WORK + "\"," +
-                            " когда вы приступаете к работе необходимо ее нажать для учета ваших рабочих дней.", STARTED_WORK
-            );
-            user.setSendButtonStartWork(true);
-            userRepository.save(user);
-        } else if (nonNull(role) && TEACHER_ROLES.contains(role) && !user.isSendButtonStartWork()) {
-            sendButtonStartWork(user.getChatId(),
-                    "ВАЖНО!!!\nДобавлена кнопка \"" + END_LESSON + "\"," +
-                            " когда вы закончили урок, необходимо ее нажать для учета ваших уроков.", END_LESSON);
-            user.setSendButtonStartWork(true);
-            userRepository.save(user);
-        }
     }
 
     private ReplyKeyboardMarkup createButtonList(List<String> listButton) {
