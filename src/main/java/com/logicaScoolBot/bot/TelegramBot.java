@@ -1,11 +1,8 @@
 package com.logicaScoolBot.bot;
 
 import com.logicaScoolBot.config.BotConfig;
-import com.logicaScoolBot.entity.AdministratorWorkDay;
-import com.logicaScoolBot.enums.Role;
 import com.logicaScoolBot.entity.TelegramUser;
 import com.logicaScoolBot.repository.UserRepository;
-import com.logicaScoolBot.service.AdministratorWorkDayService;
 import com.logicaScoolBot.service.BeenResolver;
 import com.logicaScoolBot.service.SbpService;
 import com.vdurmont.emoji.EmojiParser;
@@ -14,12 +11,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -30,21 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.logicaScoolBot.enums.Role.ADMIN;
-import static com.logicaScoolBot.enums.Role.ADMIN_DUBNA;
-import static com.logicaScoolBot.enums.Role.ADMIN_MOSKOW;
-import static com.logicaScoolBot.enums.Role.ADMIN_RAMENSKOE;
-import static com.logicaScoolBot.enums.Role.ADMIN_TEST;
-import static com.logicaScoolBot.enums.Role.ADMIN_VOSKRESENSK;
-import static com.logicaScoolBot.enums.Role.SUPER_ADMIN;
-import static com.logicaScoolBot.enums.Role.TEACHER_DUBNA;
-import static com.logicaScoolBot.enums.Role.TEACHER_MOSKOW;
-import static com.logicaScoolBot.enums.Role.TEACHER_RAMENSKOE;
-import static com.logicaScoolBot.enums.Role.TEACHER_TEST;
-import static com.logicaScoolBot.enums.Role.TEACHER_VOSKRESENSK;
-import static com.logicaScoolBot.service.AdministratorWorkDayServiceImpl.REPEAT_CLICK;
+import static com.logicaScoolBot.constnt.Constant.ADD_NEW_CLIENT;
 import static com.logicaScoolBot.utils.PhoneUtils.getPhoneFormat;
-import static java.util.Objects.nonNull;
 
 @Slf4j
 @Component
@@ -52,56 +34,26 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
-    private static final String ADD_NEW_CLIENT = "Добавление нового клиента";
 
     private final UserRepository userRepository;
     private final BotConfig config;
-    private final AdministratorWorkDayService administratorWorkDayService;
     private final BeenResolver beenResolver;
-
-    private final List<Role> ADMIN_STATISTIC_DAYS = List.of(
-            ADMIN_DUBNA,
-            ADMIN_MOSKOW,
-            ADMIN_VOSKRESENSK,
-            ADMIN_RAMENSKOE,
-            ADMIN_TEST
-    );
-
-    private final List<Role> TEACHER_ROLES = List.of(
-            TEACHER_DUBNA,
-            TEACHER_MOSKOW,
-            TEACHER_VOSKRESENSK,
-            TEACHER_RAMENSKOE,
-            TEACHER_TEST
-    );
-
-    private final List<Role> ADMIN_START_WORK = List.of(
-            SUPER_ADMIN,
-            ADMIN
-    );
-
-    static final String YES_BUTTON = "YES_BUTTON";
-    static final String NO_BUTTON = "NO_BUTTON";
 
     static final String ERROR_TEXT = "Error occurred: ";
 
     public TelegramBot(BotConfig config,
                        UserRepository userRepository,
                        SbpService sbpService,
-                       AdministratorWorkDayService administratorWorkDayService,
                        BeenResolver beenResolver) {
         this.config = config;
         this.userRepository = userRepository;
         this.sbpService = sbpService;
-        this.administratorWorkDayService = administratorWorkDayService;
         this.beenResolver = beenResolver;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "Добро пожаловать!"));
         var yesButton = new InlineKeyboardButton();
 
-        yesButton.setText("Yes");
-        yesButton.setCallbackData(YES_BUTTON);
         try {
             this.execute(new SetMyCommands(listofCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
@@ -127,78 +79,22 @@ public class TelegramBot extends TelegramLongPollingBot {
             beenResolver.resolve(update);
             String messageText = update.getMessage().getText();
 
-            //todo это тут нахрена ???
-            if (messageText.contains("/send") && config.getOwnerId() == chatId) {
-                var textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
-                var users = userRepository.findAll();
-                for (TelegramUser telegramUser : users) {
-                    prepareAndSendMessage(telegramUser.getChatId(), textToSend);
-                }
-            } else {
-                if (messageText.equals(QR_GENERATE)) {
-                    prepareAndSendMessage(chatId, "Для того чтоб сгенерировать QR, необходимо отправить сообщение с суммой и номером телефона клиента, для которого хотим сгенерировать QR.\n" +
-                            "например:\n" +
-                            "QR 1000 9273888212");
-                } else if (messageText.startsWith("QR")) {
-                    // todo проверить что соответствует формату "QR 1000 9273888212"
-                    String[] strArr = messageText.split("\\s+");
-                    int amount = Integer.parseInt(strArr[1]) * 100;
-                    String purpose = getPhoneFormat(strArr[2]);
-                    TelegramUser telegramUser = userRepository.findById(chatId).orElseThrow();
-                    String payload = sbpService.registerQr(amount, purpose, telegramUser.getFirstName());
-                    prepareAndSendMessage(chatId, payload);
-                }
-
-                switch (messageText) {
-                    case "/start":
-
-                        registerUser(update.getMessage());
-                        break;
-                }
-            }
-        } else if (update.hasCallbackQuery()) {
-            String callbackData = update.getCallbackQuery().getData();
-            long messageId = update.getCallbackQuery().getMessage().getMessageId();
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
-
-            if (callbackData.equals(YES_BUTTON)) {
-                String text = "You pressed YES button";
-                executeEditMessageText(text, chatId, messageId);
-            } else if (callbackData.equals(NO_BUTTON)) {
-                String text = "You pressed NO button";
-                executeEditMessageText(text, chatId, messageId);
+            if (messageText.equals(QR_GENERATE)) {
+                prepareAndSendMessage(chatId, "Для того чтоб сгенерировать QR, необходимо отправить сообщение с суммой и номером телефона клиента, для которого хотим сгенерировать QR.\n" +
+                        "например:\n" +
+                        "QR 1000 9273888212");
+            } else if (messageText.startsWith("QR")) {
+                // todo проверить что соответствует формату "QR 1000 9273888212"
+                String[] strArr = messageText.split("\\s+");
+                int amount = Integer.parseInt(strArr[1]) * 100;
+                String purpose = getPhoneFormat(strArr[2]);
+                TelegramUser telegramUser = userRepository.findById(chatId).orElseThrow();
+                String payload = sbpService.registerQr(amount, purpose, telegramUser.getFirstName());
+                prepareAndSendMessage(chatId, payload);
+            } else if ("/start".equals(messageText)) {
+                registerUser(update.getMessage());
             }
         }
-    }
-
-    private void register(long chatId) {
-
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Do you really want to register?");
-
-        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-        var yesButton = new InlineKeyboardButton();
-
-        yesButton.setText("Yes");
-        yesButton.setCallbackData(YES_BUTTON);
-
-        var noButton = new InlineKeyboardButton();
-
-        noButton.setText("No");
-        noButton.setCallbackData(NO_BUTTON);
-
-        rowInLine.add(yesButton);
-        rowInLine.add(noButton);
-
-        rowsInLine.add(rowInLine);
-
-        markupInLine.setKeyboard(rowsInLine);
-        message.setReplyMarkup(markupInLine);
-
-        executeMessage(message);
     }
 
     private void registerUser(Message msg) {
@@ -253,44 +149,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-    private void sendButtonStartWork(long chatId, String textToSend, String button) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(textToSend);
-
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-
-        KeyboardRow row = new KeyboardRow();
-
-            row.add(QR_GENERATE);
-            row.add(ADD_NEW_CLIENT);
-
-            row.add(button);
-
-        keyboardRows.add(row);
-
-        keyboardMarkup.setKeyboard(keyboardRows);
-
-        message.setReplyMarkup(keyboardMarkup);
-
-        executeMessage(message);
-    }
-
-    private void executeEditMessageText(String text, long chatId, long messageId) {
-        EditMessageText message = new EditMessageText();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        message.setMessageId((int) messageId);
-
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            log.error(ERROR_TEXT + e.getMessage());
-        }
-    }
-
     private void executeMessage(SendMessage message) {
         try {
             execute(message);
@@ -306,23 +164,4 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
 
-    private ReplyKeyboardMarkup createButtonList(List<String> listButton) {
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        row.add(listButton.get(0));
-        row.add(listButton.get(1));
-        keyboardRows.add(row);
-        row = new KeyboardRow();
-        row.add(listButton.get(2));
-        row.add(listButton.get(3));
-        keyboardRows.add(row);
-        if (listButton.size() > 4) {
-            row = new KeyboardRow();
-            row.add(listButton.get(4));
-            keyboardRows.add(row);
-        }
-        keyboardMarkup.setKeyboard(keyboardRows);
-        return keyboardMarkup;
-    }
 }

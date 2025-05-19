@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentDto implements KafkaEvent {
+public class ClientDto implements KafkaEvent {
 
     private Long id;
     private String phone;

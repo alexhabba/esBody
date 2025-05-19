@@ -4,9 +4,9 @@ import com.logicaScoolBot.dto.DataDto;
 import com.logicaScoolBot.dto.RequestQrRegistrationDto;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.enums.QrStatus;
-import com.logicaScoolBot.entity.Student;
+import com.logicaScoolBot.entity.Client;
 import com.logicaScoolBot.repository.QrRepository;
-import com.logicaScoolBot.repository.StudentRepository;
+import com.logicaScoolBot.repository.ClientRepository;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,22 +29,31 @@ import static java.util.Objects.isNull;
 @Service
 public class SbpServiceImpl implements SbpService {
     private static final String URI_BASE = "https://enter.tochka.com/uapi/sbp/v1.0/";
-    private static final String URI_REGISTER_QR = URI_BASE + "qr-code/merchant/MA0001860755/40802810801500302115/044525104";
+//    private static final String URI_REGISTER_QR = URI_BASE + "qr-code/merchant/MA0001860755/40802810801500302115/044525104";
+//    private static final String URI_REGISTER_QR = URI_BASE + "qr-code/merchant/MB0001632773/40702810320000187916/044525104";
+    // ип Радченко Эстетика тела
+    private static final String URI_REGISTER_QR = URI_BASE + "qr-code/merchant/MB0001632773/40802810020000640637/044525104";
+
     private static final String URI_GET_QRC_STATUS = URI_BASE + "qr-codes/qrcId/payment-status";
 
     private final HttpHeaders headers;
 
     private final RestTemplate restTemplate;
-    private final StudentRepository studentRepository;
+    private final ClientRepository clientRepository;
     private final QrRepository qrRepository;
 
-    public SbpServiceImpl(StudentRepository studentRepository, QrRepository qrRepository) {
+    public SbpServiceImpl(ClientRepository clientRepository, QrRepository qrRepository) {
         this.restTemplate = new RestTemplate();
         this.headers = new HttpHeaders();
-        this.studentRepository = studentRepository;
+        this.clientRepository = clientRepository;
         this.qrRepository = qrRepository;
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJvbjJhdzBwOWE3RnlUbFBXaGtMbmJIelJZcTJ5dURobSJ9.ojsvdwVeqpRuR2wmIDP_myS7gbkq6xi1jK8t3NgXUMZo35tJtli-Hpn142QVLwJEbzKyDpMcMDaXsSbdwr690pLmHhn7TH5TvQizhFFTha6XQmpoivOZxUWzepbsc-3ggLy2UkiRWNSG_UgiWNdItv0A8oCh8hIjPDWo4_qNEFl8WR5is1mJ-rdACdIH7TERW_-udud3oBoOSTsVXiRbvqDzi7WJloo0CZMZ_9i-foSHtkf2EAbyrFB-liDCuFb56UgzFEuxfwvc2DFCTgp6QKIL_d-hatM8P8r79TWiZV5zEMgsz6NqShJNqwe6sZjegErw7aKd4_VxmtwNkHSlhmlp3jtS60TFQwSwDdIeFuVY7uOAxVZ45IijFMIdMyGsyad-LozcZBbrijON7Lz7MsLESpRBMA4ZtOG_DlP4-sdLh_rCvzAX8Y2uwUTwIdHlWna6u-rBVXSswFlfbbqs1Rs8n1ja4izYiD_xx-pArJRxqLcJbreZG6UnEhB2o6Ga");
+        // Алгоритмика
+//        headers.add("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJvbjJhdzBwOWE3RnlUbFBXaGtMbmJIelJZcTJ5dURobSJ9.ojsvdwVeqpRuR2wmIDP_myS7gbkq6xi1jK8t3NgXUMZo35tJtli-Hpn142QVLwJEbzKyDpMcMDaXsSbdwr690pLmHhn7TH5TvQizhFFTha6XQmpoivOZxUWzepbsc-3ggLy2UkiRWNSG_UgiWNdItv0A8oCh8hIjPDWo4_qNEFl8WR5is1mJ-rdACdIH7TERW_-udud3oBoOSTsVXiRbvqDzi7WJloo0CZMZ_9i-foSHtkf2EAbyrFB-liDCuFb56UgzFEuxfwvc2DFCTgp6QKIL_d-hatM8P8r79TWiZV5zEMgsz6NqShJNqwe6sZjegErw7aKd4_VxmtwNkHSlhmlp3jtS60TFQwSwDdIeFuVY7uOAxVZ45IijFMIdMyGsyad-LozcZBbrijON7Lz7MsLESpRBMA4ZtOG_DlP4-sdLh_rCvzAX8Y2uwUTwIdHlWna6u-rBVXSswFlfbbqs1Rs8n1ja4izYiD_xx-pArJRxqLcJbreZG6UnEhB2o6Ga");
+        // Эстетика ООО
+        headers.add("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIyYWQ4MTFmMjI4OTVmY2I0ZjY1MTY3NDY3MjYzZTQyOSJ9.ehjHLkcADXAgC80mNGZWIExTfVYqqo94bpBZxJgsXQx9tTQXEg94qJBurzFFdv-rHb-cTRyzV-3Dvi6hwsOjZyuGAnx5PZqxFo-IuEw7c9qX3vbY84vpf2zPuoPX7XqteCf4w1GV_W2hmP9capq2M-Z4M4FYUv9nKVuQZvseiV9zDqKDskhWfeK6jvZnbxqr_5g-giBq7oELrFxQQtgbKNrwVd8Uhzou1e-aNwm6dMZqyzVj-aWm1IfRPC7tWS0sKHzNmoUjbvFn7EcW8HF30oh-_GU0PU-eAE8t8NF77amW20RaoaQi9HD1JA7NqiC-fHmEMvaOCX0O9AvFMh1bE9IZZE5a1nQA1zMpJ5ub2SGLrsAYt76OvKhvgDyKe9sPHcTMw7fIUBMHv-ywxU2vQOrxEyZBzsNCSnEp4J7LDFxCQXN7ijuqh9CjVcYfPaVZkUqqH3ftAmN0HNpn7p-G4gb-3AyvV_tSNKp3zPiV4Ank16Njs8d3WkCdild3q-ra");
+        // Эстетика ИП
+        headers.add("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIyYWQ4MTFmMjI4OTVmY2I0ZjY1MTY3NDY3MjYzZTQyOSJ9.ehjHLkcADXAgC80mNGZWIExTfVYqqo94bpBZxJgsXQx9tTQXEg94qJBurzFFdv-rHb-cTRyzV-3Dvi6hwsOjZyuGAnx5PZqxFo-IuEw7c9qX3vbY84vpf2zPuoPX7XqteCf4w1GV_W2hmP9capq2M-Z4M4FYUv9nKVuQZvseiV9zDqKDskhWfeK6jvZnbxqr_5g-giBq7oELrFxQQtgbKNrwVd8Uhzou1e-aNwm6dMZqyzVj-aWm1IfRPC7tWS0sKHzNmoUjbvFn7EcW8HF30oh-_GU0PU-eAE8t8NF77amW20RaoaQi9HD1JA7NqiC-fHmEMvaOCX0O9AvFMh1bE9IZZE5a1nQA1zMpJ5ub2SGLrsAYt76OvKhvgDyKe9sPHcTMw7fIUBMHv-ywxU2vQOrxEyZBzsNCSnEp4J7LDFxCQXN7ijuqh9CjVcYfPaVZkUqqH3ftAmN0HNpn7p-G4gb-3AyvV_tSNKp3zPiV4Ank16Njs8d3WkCdild3q-ra");
     }
 
     @Override
@@ -58,8 +67,8 @@ public class SbpServiceImpl implements SbpService {
             LinkedHashMap<String, String> data = res.get("Data");
             String qrcId = data.get("qrcId");
             String payload = data.get("payload");
-            Student student = studentRepository.findStudentByPhone(purpose);
-            if (isNull(student)) {
+            Client client = clientRepository.findStudentByPhone(purpose);
+            if (isNull(client)) {
                 return "Нет клиента с таким номером";
             }
             Qr qr = Qr.builder()
@@ -68,11 +77,11 @@ public class SbpServiceImpl implements SbpService {
                     .amount(amount / 100)
                     .purpose(purpose)
                     .nameAdder(nameAdder)
-                    .student(student)
+                    .client(client)
                     .build();
-            student.getQrc().add(qr);
+            client.getQrc().add(qr);
 
-            studentRepository.saveAndFlush(student);
+            clientRepository.saveAndFlush(client);
             return payload;
         } catch (Exception ex) {
             System.out.println("Ошибка SbpServiceImpl.registerQr");

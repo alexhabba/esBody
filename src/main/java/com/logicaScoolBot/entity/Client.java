@@ -1,7 +1,6 @@
 package com.logicaScoolBot.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,20 +21,17 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student {
+public class Client {
 
     @Id
     private Long id;
 
     private String phone;
 
-    private String fullNameChild;
 
-    private String fullNameParent;
+    private String fullName;
 
     private String city;
-
-    private String course;
 
     private String nameAdder;
 
@@ -44,17 +40,8 @@ public class Student {
     @CreationTimestamp
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Qr> qrc;
 
-    @Override
-    public String toString() {
-        return
-                "телефон : " + phone + "\n" +
-                "имя ребенка : " + fullNameChild + "\n" +
-                "имя родителя : " + fullNameParent + "\n" +
-                "курс : " + course + "\n" +
-                "город : " + city;
-    }
 
 }

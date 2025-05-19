@@ -50,6 +50,6 @@ public class Qr {
     private LocalDateTime updateDate;
 
     @ManyToOne
-    private Student student;
+    private Client client;
 
 }

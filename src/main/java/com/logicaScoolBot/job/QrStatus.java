@@ -1,9 +1,9 @@
 package com.logicaScoolBot.job;
 
+import com.logicaScoolBot.entity.Client;
 import com.logicaScoolBot.entity.Qr;
-import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.entity.TelegramUser;
-import com.logicaScoolBot.repository.StudentRepository;
+import com.logicaScoolBot.repository.ClientRepository;
 import com.logicaScoolBot.repository.UserRepository;
 import com.logicaScoolBot.service.SbpService;
 import com.logicaScoolBot.service.SenderService;
@@ -21,7 +21,7 @@ public class QrStatus {
     private final SenderService senderService;
     private final SbpService sbpService;
     private final UserRepository userRepository;
-    private final StudentRepository studentRepository;
+    private final ClientRepository clientRepository;
 
     @Timed("statusQr")
     @Scheduled(cron = "${cron.job.statusQr}")
@@ -30,8 +30,8 @@ public class QrStatus {
         List<Qr> qrs = sbpService.getAllByQrId(list);
 
         qrs.forEach(qr -> {
-            Student student = studentRepository.findStudentByPhone(qr.getPurpose());
-            String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + student.toString();
+            Client client = clientRepository.findStudentByPhone(qr.getPurpose());
+            String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + client.toString();
             userRepository.findAll().stream()
                     .map(TelegramUser::getChatId)
                     .forEach(chatId -> {

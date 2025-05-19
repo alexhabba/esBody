@@ -1,16 +1,16 @@
 spring:
   flyway:
     locations: classpath:db/migration
-    schemas: bot
+    schemas: es_body
     enabled: true
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     database: postgresql
   datasource:
-#    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}?currentSchema=bot
-    url: jdbc:postgresql://${RDS_HOSTNAME:45.8.251.166}:${RDS_PORT:5433}/${RDS_DB_NAME:postgres}?currentSchema=bot
+    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}?currentSchema=es_body
+#    url: jdbc:postgresql://${RDS_HOSTNAME:45.8.251.166}:${RDS_PORT:5433}/${RDS_DB_NAME:postgres}?currentSchema=bot
 #    url: jdbc:postgresql://${RDS_HOSTNAME:host.docker.internal:${RDS_PORT:5432}/${RDS_DB_NAME:bot}?currentSchema=bot
     username: ${RDS_USERNAME:postgres}
     password: ${RDS_PASSWORD:postgres}
@@ -33,10 +33,9 @@ spring:
     topicName: top1
 
 bot:
-  name: LogicaScol
-  token: 5594650440:AAFbqVQvSmHwL2SCtDrkw5gQePfMRJCWahw
+  name: TradeHelperBot
+  token: 7949785764:AAHKs52HEL-aVwQrJPtNwaATPq8Nk-3aPI8
   owner: 1
-
 cron:
 #  scheduler: 0 * * * * ?
   scheduler: 0 */5 * * * *

@@ -1,7 +1,7 @@
 package com.logicaScoolBot.controller;
 
-import com.logicaScoolBot.entity.Student;
-import com.logicaScoolBot.service.StudentService;
+import com.logicaScoolBot.entity.Client;
+import com.logicaScoolBot.service.ClientService;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final StudentService studentService;
+    private final ClientService clientService;
 
     @GetMapping("/")
     public String test() {
@@ -24,7 +24,7 @@ public class TestController {
 
     @Timed("allUser")
     @GetMapping("/allUser")
-    public List<Student> getAllUser() {
-        return studentService.getAllStudent();
+    public List<Client> getAllUser() {
+        return clientService.getAllClient();
     }
 }

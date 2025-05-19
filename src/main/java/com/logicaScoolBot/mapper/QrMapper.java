@@ -9,6 +9,6 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface QrMapper {
 
-    @Mapping(target = "studentId", source = "entity.student.id")
+    @Mapping(target = "clientId", source = "entity.client.id")
     QrDto toDto(Qr entity);
 }

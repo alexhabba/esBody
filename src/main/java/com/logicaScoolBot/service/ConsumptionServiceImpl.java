@@ -1,8 +1,8 @@
 package com.logicaScoolBot.service;
 
 import com.logicaScoolBot.entity.Consumption;
-import com.logicaScoolBot.enums.Role;
 import com.logicaScoolBot.entity.TelegramUser;
+import com.logicaScoolBot.enums.Role;
 import com.logicaScoolBot.exception.HandlerMessageException;
 import com.logicaScoolBot.repository.ConsumptionRepository;
 import com.logicaScoolBot.repository.UserRepository;
@@ -15,11 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.logicaScoolBot.constnt.Constant.MAP_CITY;
-import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -53,22 +49,14 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
         if (chatIdSuperUsers.contains(update.getMessage().getChatId())) {
             List<String> list = Arrays.asList(update.getMessage().getText().split("\\s+"));
 
-            Optional<String> anyCity = list.stream()
-                    .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
-                    .findAny();
-
             long amount = 0;
 
             try {
                 amount = Long.parseLong(list.get(0));
-                if (anyCity.isEmpty()) {
-                    senderService.send(update.getMessage().getChatId(), "Не указан город");
-                    throw new RuntimeException();
-                }
+
 
                 Consumption build = Consumption.builder()
                         .amount(amount)
-                        .city(MAP_CITY.get(anyCity.get().toUpperCase()))
                         .description(getDescription(update.getMessage().getText(), list, amount))
                         .build();
 
@@ -81,10 +69,7 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
                 //todo
                 throw new HandlerMessageException();
             } catch (NumberFormatException ex) {
-                if (anyCity.isPresent()) {
-                    senderService.send(update.getMessage().getChatId(), "для добавления расхода, сначала пишем сумму потом город и на что потрачено");
-                    throw new HandlerMessageException();
-                }
+
             }
         }
     }
@@ -94,7 +79,6 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
         return messageText
                 .replace(Long.toString(amount), "")
                 .replace(list.stream()
-                        .filter(str -> nonNull(MAP_CITY.get(str.toUpperCase())))
                         .findAny().get(), "")
                 .trim();
     }

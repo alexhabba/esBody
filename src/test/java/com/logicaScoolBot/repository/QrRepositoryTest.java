@@ -1,8 +1,8 @@
 package com.logicaScoolBot.repository;
 
+import com.logicaScoolBot.entity.Client;
 import com.logicaScoolBot.entity.Qr;
 import com.logicaScoolBot.enums.QrStatus;
-import com.logicaScoolBot.entity.Student;
 import com.logicaScoolBot.service.QrServiceImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ class QrRepositoryTest {
     private QrRepository qrRepository;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private ClientRepository clientRepository;
 
     @Autowired
     private QrServiceImpl qrService;
@@ -44,14 +44,12 @@ class QrRepositoryTest {
 //        Integer amountSumToDay = qrRepository.getAmountSumToDay(LocalDateTime.now());
     }
 
-    private Student createStudent() {
-        return Student.builder()
+    private Client createStudent() {
+        return Client.builder()
                 .id(1L)
                 .city("wfrsd")
                 .phone("89098766666")
-                .course("dfg")
-                .fullNameParent("sdfsdf")
-                .fullNameChild("sfdgdg")
+                .fullName("sdfsdf")
                 .build();
     }
 

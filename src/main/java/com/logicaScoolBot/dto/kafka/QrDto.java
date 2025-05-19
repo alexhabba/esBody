@@ -26,5 +26,5 @@ public class QrDto implements KafkaEvent {
     private boolean isSend;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    private long studentId;
+    private long clientId;
 }
