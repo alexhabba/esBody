@@ -43,5 +43,11 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Qr> qrc;
 
+    @Override
+    public String toString() {
+        return
+                "телефон : " + phone + "\n" +
+                        "имя клиента : " + fullName;
+    }
 
 }
