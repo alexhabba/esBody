@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class SbpServiceImpl implements SbpService {
 
     @Value("${delivery.token}")
     private String tokenDelivery;
+
+//    "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJvbjJhdzBwOWE3RnlUbFBXaGtMbmJIelJZcTJ5dURobSJ9.ojsvdwVeqpRuR2wmIDP_myS7gbkq6xi1jK8t3NgXUMZo35tJtli-Hpn142QVLwJEbzKyDpMcMDaXsSbdwr690pLmHhn7TH5TvQizhFFTha6XQmpoivOZxUWzepbsc-3ggLy2UkiRWNSG_UgiWNdItv0A8oCh8hIjPDWo4_qNEFl8WR5is1mJ-rdACdIH7TERW_-udud3oBoOSTsVXiRbvqDzi7WJloo0CZMZ_9i-foSHtkf2EAbyrFB-liDCuFb56UgzFEuxfwvc2DFCTgp6QKIL_d-hatM8P8r79TWiZV5zEMgsz6NqShJNqwe6sZjegErw7aKd4_VxmtwNkHSlhmlp3jtS60TFQwSwDdIeFuVY7uOAxVZ45IijFMIdMyGsyad-LozcZBbrijON7Lz7MsLESpRBMA4ZtOG_DlP4-sdLh_rCvzAX8Y2uwUTwIdHlWna6u-rBVXSswFlfbbqs1Rs8n1ja4izYiD_xx-pArJRxqLcJbreZG6UnEhB2o6Ga"
+//    "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJvbjJhdzBwOWE3RnlUbFBXaGtMbmJIelJZcTJ5dURobSJ9.ojsvdwVeqpRuR2wmIDP_myS7gbkq6xi1jK8t3NgXUMZo35tJtli-Hpn142QVLwJEbzKyDpMcMDaXsSbdwr690pLmHhn7TH5TvQizhFFTha6XQmpoivOZxUWzepbsc-3ggLy2UkiRWNSG_UgiWNdItv0A8oCh8hIjPDWo4_qNEFl8WR5is1mJ-rdACdIH7TERW_-udud3oBoOSTsVXiRbvqDzi7WJloo0CZMZ_9i-foSHtkf2EAbyrFB-liDCuFb56UgzFEuxfwvc2DFCTgp6QKIL_d-hatM8P8r79TWiZV5zEMgsz6NqShJNqwe6sZjegErw7aKd4_VxmtwNkHSlhmlp3jtS60TFQwSwDdIeFuVY7uOAxVZ45IijFMIdMyGsyad-LozcZBbrijON7Lz7MsLESpRBMA4ZtOG_DlP4-sdLh_rCvzAX8Y2uwUTwIdHlWna6u-rBVXSswFlfbbqs1Rs8n1ja4izYiD_xx-pArJRxqLcJbreZG6UnEhB2o6Ga"
     private static final String URI_BASE = "https://enter.tochka.com/uapi/sbp/v1.0/";
 
     private static final String URI_REGISTER_QR = URI_BASE + "qr-code/merchant/MA0004753994/40802810020000640637/044525104";
@@ -50,6 +54,10 @@ public class SbpServiceImpl implements SbpService {
         this.clientRepository = clientRepository;
         this.qrRepository = qrRepository;
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    }
+
+    @PostConstruct
+    public void init() {
         headers.add("Authorization", tokenDelivery);
     }
 

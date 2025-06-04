@@ -55,7 +55,7 @@ public class CommonStatementService {
     public void getStatement(OrgType orgType) {
         String accountId = MAP_RESOLVER.get(orgType).getLeft();
         String token = MAP_RESOLVER.get(orgType).getRight();
-        ResponseStatementDto statement = statementService.getStatement(accountId, token, LocalDate.now().minusDays(1).toString(), LocalDate.now().toString());
+        ResponseStatementDto statement = statementService.getStatement(accountId, token, LocalDate.now().toString(), LocalDate.now().toString());
         Map<String, TransactionDto> mapPaymentIdTransactionDto = statement.getData().getStatement().stream()
                 .map(ResponseStatementDto.Statement::getTransactions)
                 .flatMap(Collection::stream)
