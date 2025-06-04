@@ -1,6 +1,5 @@
 package com.es.body.dto.kafka;
 
-import com.es.body.enums.City;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +20,5 @@ public class ConsumptionDto implements KafkaEvent {
     private String description;
     private long amount;
     private boolean isSend;
-    private City city;
     private LocalDateTime createDate;
 }

@@ -1,0 +1,1 @@
+ALTER TABLE consumption ALTER COLUMN amount TYPE DECIMAL(20, 4) USING amount::DECIMAL;

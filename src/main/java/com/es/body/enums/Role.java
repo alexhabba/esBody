@@ -13,8 +13,9 @@ public enum Role {
     TEACHER_TEST,
     TEACHER_DUBNA,
     TEACHER_MOSKOW,
-    TEACHER_VOSKRESENSK,
-    TEACHER_RAMENSKOE;
+    // Бухгалтер
+    ACCOUNTANT,
+    MANAGER;
 
 //    todo додумать
     public List<Role> getrl() {

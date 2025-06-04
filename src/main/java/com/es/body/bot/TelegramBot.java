@@ -3,6 +3,7 @@ package com.es.body.bot;
 import com.es.body.config.BotConfig;
 import com.es.body.constnt.Constant;
 import com.es.body.entity.TelegramUser;
+import com.es.body.enums.Role;
 import com.es.body.repository.UserRepository;
 import com.es.body.service.BeenResolver;
 import com.es.body.service.SbpService;
@@ -31,6 +32,7 @@ import java.util.Optional;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
+    public static final String YOU_HAVE_NOT_RIGHTS = "У ВАС НЕТ ПРАВ.\nНЕОБХОДИМО ПОЛУЧИТЬ НЕОБХОДИМЫЕ ПРАВА";
     private final SbpService sbpService;
     private static final String QR_GENERATE = "Сгенерировать QR";
 
@@ -88,8 +90,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 int amount = Integer.parseInt(strArr[1]) * 100;
                 String purpose = PhoneUtils.getPhoneFormat(strArr[2]);
                 TelegramUser telegramUser = userRepository.findById(chatId).orElseThrow();
-                String payload = sbpService.registerQr(amount, purpose, telegramUser.getFirstName());
-                prepareAndSendMessage(chatId, payload);
+                if (telegramUser.getRole() == Role.MANAGER || telegramUser.getRole() == Role.SUPER_ADMIN) {
+                    String payload = sbpService.registerQr(amount, purpose, telegramUser.getFirstName());
+                    prepareAndSendMessage(chatId, payload);
+                } else {
+                    prepareAndSendMessage(chatId, YOU_HAVE_NOT_RIGHTS);
+                }
             } else if ("/start".equals(messageText)) {
                 registerUser(update.getMessage());
             }

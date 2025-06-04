@@ -1,0 +1,204 @@
+{
+  "Data": {
+    "Statement": [
+      {
+        "accountId": "40802810020000640637/044525104",
+        "statementId": "6b5b6f67-856c-48d5-bd89-ee766b832ee9",
+        "status": "Ready",
+        "startDateTime": "2025-06-02",
+        "endDateTime": "2025-06-02",
+        "creationDateTime": "2025-06-03T09:30:38.532292+00:00",
+        "startDateBalance": 210615.45,
+        "endDateBalance": 132665.71,
+        "Transaction": [
+          {
+            "transactionId": "cbs-tb;1371081804;1",
+            "paymentId": "nspk-sbp-core-c2b-ccf2daa76e73466512f4488bb12eedf1",
+            "creditDebitIndicator": "Debit",
+            "status": "Booked",
+            "documentNumber": "135553",
+            "transactionTypeCode": "Банковский ордер",
+            "documentProcessDate": "2025-06-02",
+            "description": "Комиссия за зачисление перевода по QR коду ID BD20005A8J4VB1D582NRJ4KP3GD7A5JL. НДС не предусмотрен.",
+            "Amount": {
+              "amount": 16.1,
+              "amountNat": 16.1,
+              "currency": "RUB"
+            },
+            "CreditorParty": {
+              "inn": "9721194461",
+              "name": "ООО \"Банк Точка\"",
+              "kpp": "997950001"
+            },
+            "CreditorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "70601810400002720304"
+            },
+            "CreditorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          },
+          {
+            "transactionId": "cbs-tb;1371069824;1",
+            "paymentId": "cbs-tb-92-2617818473",
+            "creditDebitIndicator": "Credit",
+            "status": "Booked",
+            "documentNumber": "227582",
+            "transactionTypeCode": "Банковский ордер",
+            "documentProcessDate": "2025-06-02",
+            "description": "Зачисление по QR коду ID BD20005A8J4VB1D582NRJ4KP3GD7A5JL от 02.06.2025. НДС не предусмотрен.",
+            "Amount": {
+              "amount": 2300.0,
+              "amountNat": 2300.0,
+              "currency": "RUB"
+            },
+            "DebtorParty": {
+              "inn": "9721194461",
+              "name": "ООО \"Банк Точка\"",
+              "kpp": "997950001"
+            },
+            "DebtorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "30233810220000000009"
+            },
+            "DebtorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          },
+          {
+            "transactionId": "cbs-tb;1371043407;1",
+            "paymentId": "nspk-sbp-core-c2b-ee6d909d17629ce18ef74c4753883ddd",
+            "creditDebitIndicator": "Debit",
+            "status": "Booked",
+            "documentNumber": "134566",
+            "transactionTypeCode": "Банковский ордер",
+            "documentProcessDate": "2025-06-02",
+            "description": "Комиссия за зачисление перевода по QR коду ID BD2000335903OSUL91B9BG3FQMRU0QCG. НДС не предусмотрен.",
+            "Amount": {
+              "amount": 38.64,
+              "amountNat": 38.64,
+              "currency": "RUB"
+            },
+            "CreditorParty": {
+              "inn": "9721194461",
+              "name": "ООО \"Банк Точка\"",
+              "kpp": "997950001"
+            },
+            "CreditorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "70601810400002720304"
+            },
+            "CreditorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          },
+          {
+            "transactionId": "cbs-tb;1371031637;1",
+            "paymentId": "cbs-tb-92-2617713561",
+            "creditDebitIndicator": "Credit",
+            "status": "Booked",
+            "documentNumber": "194043",
+            "transactionTypeCode": "Банковский ордер",
+            "documentProcessDate": "2025-06-02",
+            "description": "Зачисление по QR коду ID BD2000335903OSUL91B9BG3FQMRU0QCG от 02.06.2025. НДС не предусмотрен.",
+            "Amount": {
+              "amount": 5520.0,
+              "amountNat": 5520.0,
+              "currency": "RUB"
+            },
+            "DebtorParty": {
+              "inn": "9721194461",
+              "name": "ООО \"Банк Точка\"",
+              "kpp": "997950001"
+            },
+            "DebtorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "30233810220000000009"
+            },
+            "DebtorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          },
+          {
+            "transactionId": "cbs-tb;1369304726;1",
+            "paymentId": "cbs-tb-92-2614037812",
+            "creditDebitIndicator": "Debit",
+            "status": "Booked",
+            "documentNumber": "321849",
+            "transactionTypeCode": "Банковский ордер",
+            "documentProcessDate": "2025-06-02",
+            "description": "Перевод по номеру телефона +7 999 612-01-77 Получатель Мария Владимировна Я. через СБП.",
+            "Amount": {
+              "amount": 715.0,
+              "amountNat": 715.0,
+              "currency": "RUB"
+            },
+            "CreditorParty": {
+              "inn": "9721194461",
+              "name": "ООО \"Банк Точка\"",
+              "kpp": "997950001"
+            },
+            "CreditorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "30232810920000000009"
+            },
+            "CreditorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          },
+          {
+            "transactionId": "cbs-tb;1369085641;1",
+            "paymentId": "payment-2025-06-02_3272017395",
+            "creditDebitIndicator": "Debit",
+            "status": "Booked",
+            "documentNumber": "42",
+            "transactionTypeCode": "Платежное поручение",
+            "documentProcessDate": "2025-06-02",
+            "description": "Перевод собственных средств без НДС",
+            "Amount": {
+              "amount": 85000.0,
+              "amountNat": 85000.0,
+              "currency": "RUB"
+            },
+            "CreditorParty": {
+              "inn": "5800011635",
+              "name": "ООО \"ЭСТЕТИКА ТЕЛА\"",
+              "kpp": "580001001"
+            },
+            "CreditorAccount": {
+              "schemeName": "RU.CBR.PAN",
+              "identification": "40702810320000187916"
+            },
+            "CreditorAgent": {
+              "schemeName": "RU.CBR.BIK",
+              "identification": "044525104",
+              "accountIdentification": "30101810745374525104",
+              "name": "ООО \"Банк Точка\""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Links": {
+    "self": "https://enter.tochka.com/uapi/open-banking/v1.0/accounts/40802810020000640637/044525104/statements/6b5b6f67-856c-48d5-bd89-ee766b832ee9"
+  },
+  "Meta": {
+    "totalPages": 1
+  }
+}

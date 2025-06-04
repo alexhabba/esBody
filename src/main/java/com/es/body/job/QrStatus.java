@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.es.body.enums.Role.MANAGER;
+
 @Service
 @RequiredArgsConstructor
 public class QrStatus {
@@ -32,7 +34,7 @@ public class QrStatus {
         qrs.forEach(qr -> {
             Client client = clientRepository.findStudentByPhone(qr.getPurpose());
             String textMessage = "Оплата: " + qr.getAmount() + "Р\n" + client.toString();
-            userRepository.findAll().stream()
+            userRepository.findAllByRoles(List.of(MANAGER)).stream()
                     .map(TelegramUser::getChatId)
                     .forEach(chatId -> {
                         try {

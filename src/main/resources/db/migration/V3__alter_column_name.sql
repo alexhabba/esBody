@@ -1,0 +1,1 @@
+ALTER TABLE consumption ADD COLUMN name VARCHAR(500);

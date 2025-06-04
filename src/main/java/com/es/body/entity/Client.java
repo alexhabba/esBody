@@ -28,10 +28,7 @@ public class Client {
 
     private String phone;
 
-
     private String fullName;
-
-    private String city;
 
     private String nameAdder;
 

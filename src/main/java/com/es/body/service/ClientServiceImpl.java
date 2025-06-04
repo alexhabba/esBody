@@ -1,5 +1,7 @@
 package com.es.body.service;
 
+import com.es.body.entity.TelegramUser;
+import com.es.body.enums.Role;
 import com.es.body.repository.ClientRepository;
 import com.es.body.repository.UserRepository;
 import com.es.body.entity.Client;
@@ -10,7 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
+import static com.es.body.bot.TelegramBot.YOU_HAVE_NOT_RIGHTS;
 import static com.es.body.constnt.Constant.ADD_NEW_CLIENT;
 import static com.es.body.utils.PhoneUtils.getPhoneFormat;
 
@@ -42,17 +46,22 @@ public class ClientServiceImpl implements ClientService, HandlerMessage {
                 senderService.send(update.getMessage().getChatId(), "Такой клиент уже есть в базе");
                 throw new HandlerMessageException();
             }
-            Client client = Client.builder()
-                    .id(clientRepository.findAll().stream()
-                            .map(Client::getId)
-                            .max(Comparator.naturalOrder())
-                            .orElse(0L) + 1)
-                    .fullName(split[1].trim())
-                    .phone(phone.trim())
-                    .nameAdder(userRepository.findById(update.getMessage().getChatId()).orElseThrow().getFirstName())
-                    .build();
-            clientRepository.save(client);
-            senderService.send(update.getMessage().getChatId(), "Клиент добавлен.");
+            TelegramUser telegramUser = userRepository.findById(update.getMessage().getChatId()).orElseThrow();
+            if (telegramUser.getRole() == Role.MANAGER || telegramUser.getRole() == Role.SUPER_ADMIN) {
+                Client client = Client.builder()
+                        .id(clientRepository.findAll().stream()
+                                .map(Client::getId)
+                                .max(Comparator.naturalOrder())
+                                .orElse(0L) + 1)
+                        .fullName(split[1].trim())
+                        .phone(phone.trim())
+                        .nameAdder(telegramUser.getFirstName())
+                        .build();
+                clientRepository.save(client);
+                senderService.send(update.getMessage().getChatId(), "Клиент добавлен.");
+            } else {
+                senderService.send(telegramUser.getChatId(), YOU_HAVE_NOT_RIGHTS);
+            }
         } else if (message.equals(ADD_NEW_CLIENT)) {
             senderService.send(update.getMessage().getChatId(), "Для добавления нового клиента," +
                     " необходимо отправить сообщение по шаблону:\n\n" +

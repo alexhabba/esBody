@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.es.body.enums.Role.SUPER_ADMIN;
 
@@ -24,7 +25,6 @@ public class EveryDayStatistic {
     private final QrRepository qrRepository;
     private final SenderService senderService;
     private final ConsumptionService consumptionService;
-
 
     @Timed("statisticEveryDay")
     @Scheduled(cron = "${cron.job.statisticEveryDay}")
@@ -40,7 +40,7 @@ public class EveryDayStatistic {
         Integer amountSumDay = qrRepository.getAmountSumToDay(dateTimeDay);
         String amountDay = "Сумма оплат за текущий день по СБП " + getFormatNumber(amountSumDay);
 
-        userRepository.findAllByRole(SUPER_ADMIN).forEach(user -> {
+        userRepository.findAllByRoles(List.of(SUPER_ADMIN)).forEach(user -> {
             senderService.send(user.getChatId(), amountMonth);
             senderService.send(user.getChatId(), amountMonthConsumption);
             senderService.send(user.getChatId(), amountDay);

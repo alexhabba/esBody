@@ -8,26 +8,17 @@ import java.util.concurrent.TimeUnit;
 
 public class MainTest {
 
-    public static void main(String[] args) {
-//        CompletableFuture<List<String>> listCompletableFuture = getUser().thenCompose(MainTest::getWishList);
-//
-//        List<String> join = listCompletableFuture.join();
-//
-//        System.out.println(join);
-//
-//
-//        CompletableFuture<QrStatus> stringCompletableFuture = getUserEmail()
-//                .thenCombine(getUser(), (e, u) -> {
-//                    System.out.println("thenCombine" + Thread.currentThread().getName());
-//                    return QrStatus.Accepted;
-//                });
-//
-//        System.out.println(stringCompletableFuture.join());
-
-        CompletableFuture<Object> voidCompletableFuture = CompletableFuture.anyOf(future1(), future2(), future3());
-
-        System.out.println(voidCompletableFuture.join());
-    }
+//    public static void main(String[] args) {
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+//        MediaType mediaType = MediaType.parse("text/plain");
+//        Request request = new Request.Builder()
+//                .url("https://enter.tochka.com/uapi/open-banking/v1.0/statements")
+//                .method("GET", body)
+//                .addHeader("Authorization", "Bearer <token>")
+//                .build();
+//        Response response = client.newCall(request).execute();
+//    }
 
     public static void main() {
         ExecutorService executorService = Executors.newCachedThreadPool();
