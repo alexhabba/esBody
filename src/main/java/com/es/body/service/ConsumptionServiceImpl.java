@@ -9,6 +9,7 @@ import com.es.body.entity.TelegramUser;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -88,6 +89,11 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
 
             }
         }
+    }
+
+    @Override
+    public List<Consumption> getConsumptionToday(LocalDateTime dateTime) {
+        return repository.getConsumptionToday(dateTime);
     }
 
     @NotNull

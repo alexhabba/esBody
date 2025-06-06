@@ -56,7 +56,6 @@ management:
       percentiles-histogram:
         "[http.server.requests]": true
 
-
 desert:
   account: ${DESERT_ACCOUNT:40702810320000187916/044525104}
   token: ${DESERT_TOKEN:Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIyYWQ4MTFmMjI4OTVmY2I0ZjY1MTY3NDY3MjYzZTQyOSJ9.ehjHLkcADXAgC80mNGZWIExTfVYqqo94bpBZxJgsXQx9tTQXEg94qJBurzFFdv-rHb-cTRyzV-3Dvi6hwsOjZyuGAnx5PZqxFo-IuEw7c9qX3vbY84vpf2zPuoPX7XqteCf4w1GV_W2hmP9capq2M-Z4M4FYUv9nKVuQZvseiV9zDqKDskhWfeK6jvZnbxqr_5g-giBq7oELrFxQQtgbKNrwVd8Uhzou1e-aNwm6dMZqyzVj-aWm1IfRPC7tWS0sKHzNmoUjbvFn7EcW8HF30oh-_GU0PU-eAE8t8NF77amW20RaoaQi9HD1JA7NqiC-fHmEMvaOCX0O9AvFMh1bE9IZZE5a1nQA1zMpJ5ub2SGLrsAYt76OvKhvgDyKe9sPHcTMw7fIUBMHv-ywxU2vQOrxEyZBzsNCSnEp4J7LDFxCQXN7ijuqh9CjVcYfPaVZkUqqH3ftAmN0HNpn7p-G4gb-3AyvV_tSNKp3zPiV4Ank16Njs8d3WkCdild3q-ra}

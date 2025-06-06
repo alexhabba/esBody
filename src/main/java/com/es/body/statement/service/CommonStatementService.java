@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.es.body.entity.Consumption.*;
+import static com.es.body.enums.OrgType.DELIVERY;
 import static com.es.body.enums.Role.ACCOUNTANT;
 import static com.es.body.enums.Role.ADMIN;
 
@@ -48,7 +50,7 @@ public class CommonStatementService {
     void init() {
         MAP_RESOLVER = Map.of(
                 OrgType.DESERT, Pair.of(accountIdDesert, tokenDesert),
-                OrgType.DELIVERY, Pair.of(accountIdDelivery, tokenDelivery)
+                DELIVERY, Pair.of(accountIdDelivery, tokenDelivery)
         );
     }
 
@@ -74,13 +76,23 @@ public class CommonStatementService {
             consumptions.add(consumption);
         });
 
+        consumptions
+                .forEach(c -> {
+                    if(c.getDescription().contains(PYATEROCHKA) && c.getDescription().contains(BUY)) {
+                        c.setOrgType(DELIVERY);
+                    }
+                });
         // пока просто сохраняем
         consumptionService.saveAll(consumptions);
 
 
         // добавить отправку всем у кого роль Админ
+        // не отправляем если есть вхождение этого "Комиссия за зачисление перевода по QR"
+        List<Consumption> consumptionFiltered = consumptions.stream()
+                .filter(c -> !COMMISSION_ON_QR.startsWith(c.getDescription()))
+                .collect(Collectors.toList());
 
-        if (!consumptions.isEmpty()) {
+        if (!consumptionFiltered.isEmpty()) {
             userRepository.findAllByRoles(List.of(ADMIN, ACCOUNTANT)).forEach(u ->
                 consumptions.forEach(c -> {
                     senderService.send(u.getChatId(), c.getView());
