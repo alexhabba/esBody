@@ -46,7 +46,7 @@ public class EveryDayStatistic {
 //        int amountSumMonthConsumption = consumptionService.getAmountMonth(dateTimeMonth);
 ////        String amountMonthConsumption = "Расход за текущий месяц " + getFormatNumber(amountSumMonthConsumption);
 //
-        LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay().minusDays(1);
+        LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay();
         List<Consumption> todayConsumptions = consumptionService.getConsumptionToday(dateTimeDay);
         String s = everyDayStatement(todayConsumptions);
         userRepository.findAllByRoles(List.of(ADMIN_TEST, SUPER_ADMIN, ACCOUNTANT)).forEach(user -> {
