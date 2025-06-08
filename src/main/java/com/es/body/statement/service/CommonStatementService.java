@@ -81,7 +81,7 @@ public class CommonStatementService {
         // добавить отправку всем у кого роль Админ
         // не отправляем если есть вхождение этого "Комиссия за зачисление перевода по QR"
         List<Consumption> consumptionFiltered = consumptions.stream()
-                .filter(c -> !COMMISSION_ON_QR.startsWith(c.getDescription()))
+                .filter(this::isNotCommissionQr)
                 .collect(Collectors.toList());
 
         if (!consumptionFiltered.isEmpty()) {
@@ -91,6 +91,10 @@ public class CommonStatementService {
                 })
             );
         }
+    }
+
+    private boolean isNotCommissionQr(Consumption c) {
+        return !c.getDescription().startsWith(COMMISSION_ON_QR);
     }
 
     private OrgType getOrgType(String description, OrgType orgType) {
