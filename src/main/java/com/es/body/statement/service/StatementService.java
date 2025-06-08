@@ -58,7 +58,6 @@ public class StatementService {
                 .addHeader("Authorization", token)
                 .build();
         String response = getResponse(request, 3);
-        System.out.println(response);
         return objectMapper.readValue(response, ResponseStatementDto.class);
     }
 

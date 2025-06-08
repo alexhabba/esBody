@@ -19,8 +19,8 @@ public interface ConsumptionRepository extends JpaRepository<Consumption, UUID> 
     @Query("select sum(c.amount) from Consumption c where c.createDate >= :dateTime")
     int getAmountMonth(@Param("dateTime") LocalDateTime dateTime);
 
-    @Query("select c.paymentId from Consumption c where c.paymentId in (:paymentIds) and c.orgType = :orgType")
-    Set<String> findAllByPaymentIds(Set<String> paymentIds, OrgType orgType);
+    @Query("select c.paymentId from Consumption c where c.paymentId in (:paymentIds)")
+    Set<String> findAllByPaymentIds(Set<String> paymentIds);
 
     @Query("select c from Consumption c where c.createDate >= :dateTime")
     List<Consumption> getConsumptionToday(@Param("dateTime") LocalDateTime dateTime);

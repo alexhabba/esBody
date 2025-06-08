@@ -45,8 +45,8 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
     }
 
     @Override
-    public Set<String> findMissingPaymentIds(Set<String> paymentIds, OrgType orgType) {
-        Set<String> found = repository.findAllByPaymentIds(paymentIds, orgType);
+    public Set<String> findMissingPaymentIds(Set<String> paymentIds) {
+        Set<String> found = repository.findAllByPaymentIds(paymentIds);
         Set<String> missing = new HashSet<>(paymentIds);
         missing.removeAll(found); // оставим только отсутствующие
         return missing;

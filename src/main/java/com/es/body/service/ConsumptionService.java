@@ -19,7 +19,7 @@ public interface ConsumptionService {
     /**
      * Получение transactionIds которых нет в базе данных.
      */
-    Set<String> findMissingPaymentIds(Set<String> transactionIds, OrgType orgType);
+    Set<String> findMissingPaymentIds(Set<String> transactionIds);
 
     List<Consumption> getConsumptionToday(LocalDateTime dateTime);
 

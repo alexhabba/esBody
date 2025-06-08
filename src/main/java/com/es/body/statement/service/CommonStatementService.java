@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 
 import static com.es.body.entity.Consumption.*;
 import static com.es.body.enums.OrgType.DELIVERY;
-import static com.es.body.enums.Role.ACCOUNTANT;
-import static com.es.body.enums.Role.ADMIN;
+import static com.es.body.enums.Role.*;
 
 @Service
 @RequiredArgsConstructor
@@ -61,30 +60,23 @@ public class CommonStatementService {
         Map<String, TransactionDto> mapPaymentIdTransactionDto = statement.getData().getStatement().stream()
                 .map(ResponseStatementDto.Statement::getTransactions)
                 .flatMap(Collection::stream)
+                .peek(t -> t.setPaymentId(t.getPaymentId() + t.getCreditDebitIndicator()))
                 .collect(Collectors.toMap(TransactionDto::getPaymentId, x -> x));
 
         Set<String> paymentIds = mapPaymentIdTransactionDto.keySet();
 
         // получили список id которых нет в БД
-        Set<String> allByPaymentIds = consumptionService.findMissingPaymentIds(paymentIds, orgType);
+        Set<String> allByPaymentIds = consumptionService.findMissingPaymentIds(paymentIds);
 
         List<Consumption> consumptions = new ArrayList<>();
         allByPaymentIds.forEach(transactionId -> {
             TransactionDto transactionDto = mapPaymentIdTransactionDto.get(transactionId);
             Consumption consumption = consumptionMapper.toEntity(transactionDto);
-            consumption.setOrgType(orgType);
+            consumption.setOrgType(getOrgType(consumption.getDescription(), orgType));
             consumptions.add(consumption);
         });
 
-        consumptions
-                .forEach(c -> {
-                    if(c.getDescription().contains(PYATEROCHKA) && c.getDescription().contains(BUY)) {
-                        c.setOrgType(DELIVERY);
-                    }
-                });
-        // пока просто сохраняем
         consumptionService.saveAll(consumptions);
-
 
         // добавить отправку всем у кого роль Админ
         // не отправляем если есть вхождение этого "Комиссия за зачисление перевода по QR"
@@ -93,11 +85,20 @@ public class CommonStatementService {
                 .collect(Collectors.toList());
 
         if (!consumptionFiltered.isEmpty()) {
-            userRepository.findAllByRoles(List.of(ADMIN, ACCOUNTANT)).forEach(u ->
+            userRepository.findAllByRoles(List.of(ADMIN_TEST, SUPER_ADMIN, ACCOUNTANT)).forEach(u ->
                 consumptions.forEach(c -> {
                     senderService.send(u.getChatId(), c.getView());
                 })
             );
+        }
+    }
+
+    private OrgType getOrgType(String description, OrgType orgType) {
+        if(description.contains(PYATEROCHKA) && description.contains(BUY)) {
+            return DELIVERY;
+        }
+        else {
+            return orgType;
         }
     }
 }
