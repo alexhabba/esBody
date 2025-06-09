@@ -15,10 +15,14 @@ public class SenderService {
 
     @SneakyThrows
     public void send(Long chatId, String textMessage) {
+        textMessage = textMessage.replace(".", "\\.");
+        textMessage = textMessage.replace("-", "\\-");
         AbsSender bean = applicationContext.getBean(AbsSender.class);
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
+        message.setParseMode("MarkdownV2");  // Включаем Markdown
+        message.disableWebPagePreview();
         bean.execute(message);
     }
 
