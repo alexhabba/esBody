@@ -40,7 +40,9 @@ cron:
 #  scheduler: 0 * * * * ?
   scheduler: 0 */5 * * * *
   job:
-    statisticEveryDay: 0 59 20 * * *
+    statisticDay: 0 58 20 * * *
+    statisticMedianMonth: 0 58 20 15 * *
+    statisticMonth: 0 58 20 L * *
     statusQr: 13 */5 * * * *
     delete_qr: 0 59 20 * * *
     statement: 13 */5 * * * *

@@ -1,8 +1,6 @@
 package com.es.body.service;
 
 import com.es.body.entity.Consumption;
-import com.es.body.enums.OrgType;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +19,7 @@ public interface ConsumptionService {
      */
     Set<String> findMissingPaymentIds(Set<String> transactionIds);
 
-    List<Consumption> getConsumptionToday(LocalDateTime dateTime);
+    List<Consumption> getConsumptionByDateTime(LocalDateTime dateTime);
 
 
 }

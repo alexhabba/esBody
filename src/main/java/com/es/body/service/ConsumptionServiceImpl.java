@@ -1,6 +1,5 @@
 package com.es.body.service;
 
-import com.es.body.enums.OrgType;
 import com.es.body.exception.HandlerMessageException;
 import com.es.body.repository.ConsumptionRepository;
 import com.es.body.repository.UserRepository;
@@ -9,7 +8,6 @@ import com.es.body.entity.TelegramUser;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -92,8 +90,8 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
     }
 
     @Override
-    public List<Consumption> getConsumptionToday(LocalDateTime dateTime) {
-        return repository.getConsumptionToday(dateTime);
+    public List<Consumption> getConsumptionByDateTime(LocalDateTime dateTime) {
+        return repository.getConsumptionByDateTime(dateTime);
     }
 
     @NotNull
