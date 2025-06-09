@@ -25,6 +25,8 @@ import static com.es.body.enums.CreditDebitIndicator.Debit;
 import static com.es.body.enums.OrgType.DELIVERY;
 import static com.es.body.enums.OrgType.DESERT;
 import static com.es.body.enums.Role.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -48,10 +50,12 @@ public class EveryDayStatistic {
 //
         LocalDateTime dateTimeDay = LocalDate.now().atStartOfDay();
         List<Consumption> todayConsumptions = consumptionService.getConsumptionToday(dateTimeDay);
-        String s = everyDayStatement(todayConsumptions);
-        userRepository.findAllByRoles(List.of(ADMIN_TEST, SUPER_ADMIN, ACCOUNTANT)).forEach(user -> {
-            senderService.send(user.getChatId(), everyDayStatement(todayConsumptions));
-        });
+        String infoToday = everyDayStatement(todayConsumptions);
+        if (nonNull(infoToday)) {
+            userRepository.findAllByRoles(List.of(ADMIN_TEST, SUPER_ADMIN, ACCOUNTANT)).forEach(user -> {
+                senderService.send(user.getChatId(), infoToday);
+            });
+        }
     }
 
     private String getFormatNumber(int number) {
@@ -67,6 +71,9 @@ public class EveryDayStatistic {
     }
 
     public String everyDayStatement(List<Consumption> consumptions) {
+        if (isNull(consumptions) || consumptions.isEmpty()) {
+            return null;
+        }
         BigDecimal debitDeliverySum = BigDecimal.ZERO;
         BigDecimal debitDesertSum = BigDecimal.ZERO;
         BigDecimal creditDeliverySum = BigDecimal.ZERO;
@@ -76,7 +83,7 @@ public class EveryDayStatistic {
                 .collect(Collectors.groupingBy(Consumption::getOrgType));
 
         List<Consumption> deliveryConsumptions = orgTypeConsumptions.get(DELIVERY);
-        if (!deliveryConsumptions.isEmpty()) {
+        if (nonNull(deliveryConsumptions) && !deliveryConsumptions.isEmpty()) {
             creditDeliverySum = deliveryConsumptions.stream()
                     .filter(c -> Credit == c.getCreditDebit())
                     .map(Consumption::getAmount)
@@ -89,7 +96,7 @@ public class EveryDayStatistic {
         }
 
         List<Consumption> desertConsumptions = orgTypeConsumptions.get(DESERT);
-        if (!desertConsumptions.isEmpty()) {
+        if (nonNull(desertConsumptions) && !desertConsumptions.isEmpty()) {
             creditDesertSum = desertConsumptions.stream()
                     .filter(c -> Credit == c.getCreditDebit())
                     .map(Consumption::getAmount)
