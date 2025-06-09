@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static com.es.body.entity.Consumption.*;
 import static com.es.body.enums.OrgType.DELIVERY;
 import static com.es.body.enums.Role.*;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,7 @@ public class CommonStatementService {
         Map<String, TransactionDto> mapPaymentIdTransactionDto = statement.getData().getStatement().stream()
                 .map(ResponseStatementDto.Statement::getTransactions)
                 .flatMap(Collection::stream)
+                .filter(t -> nonNull(t.getPaymentId()))
                 .peek(t -> t.setPaymentId(t.getPaymentId() + t.getCreditDebitIndicator()))
                 .collect(Collectors.toMap(TransactionDto::getPaymentId, x -> x));
 
@@ -78,7 +80,6 @@ public class CommonStatementService {
 
         consumptionService.saveAll(consumptions);
 
-        // добавить отправку всем у кого роль Админ
         // не отправляем если есть вхождение этого "Комиссия за зачисление перевода по QR"
         List<Consumption> consumptionFiltered = consumptions.stream()
                 .filter(this::isNotCommissionQr)
@@ -86,7 +87,7 @@ public class CommonStatementService {
 
         if (!consumptionFiltered.isEmpty()) {
             userRepository.findAllByRoles(List.of(ADMIN_TEST, SUPER_ADMIN, ACCOUNTANT)).forEach(u ->
-                consumptions.forEach(c -> {
+                            consumptionFiltered.forEach(c -> {
                     senderService.send(u.getChatId(), c.getView());
                 })
             );

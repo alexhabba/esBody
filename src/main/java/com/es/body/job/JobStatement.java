@@ -26,6 +26,7 @@ public class JobStatement {
 
 
     @Scheduled(cron = "${cron.job.statement}")
+//    @Scheduled(fixedDelay = 100)
     public void executeJob() {
         commonStatementService.getStatement(OrgType.DESERT);
         commonStatementService.getStatement(OrgType.DELIVERY);
