@@ -49,7 +49,7 @@ public class CandleApi {
                             .low(Double.parseDouble(candle.get(3).toString()))
                             .close(Double.parseDouble(candle.get(4).toString()))
                             .vol(volume)
-                            .interval(1)
+                            .interval(5)
                             .symbol(symbol)
                             .build();
                         candels.add(c);

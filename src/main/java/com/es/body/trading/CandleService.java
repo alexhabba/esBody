@@ -15,14 +15,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.es.body.trading.CandleApi.getCandleWithoutTicks;
+import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
 public class CandleService {
 
+    private final CandleRepository candleRepository;
     private final UserService userService;
     private final BinanceSymbolsFetcher binanceSymbolsFetcher;
     private final SenderService senderService;
+
+    // WIFUSDT 2025-06-10T16:55
+    private static final Set<String> SET_SYMBOL_LOCAL_DATE_TIME = new HashSet<>();
+
+    private static final Map<LocalDateTime, Set<String>> MAP_LOCAL_DATE_TIME_LIST_SYMBOL = new HashMap<>();
 
     private static final int medianCountTen = 10;
     private static final int medianCountTwenty = 20;
@@ -77,27 +84,28 @@ public class CandleService {
                 .filter(sym -> !setSymbolExcludes.contains(sym))
                 .forEach(s -> {
 
-                    List<Candle> candle = getCandleWithoutTicks(s, LocalDateTime.now().minusHours(3).minusMinutes(minutes), interval);
-                    List<Candle> candles = candle.stream().limit(medianCount).collect(Collectors.toList());
+                    List<Candle> candleLIst = getCandleWithoutTicks(s, LocalDateTime.now().minusHours(3).minusMinutes(minutes), interval);
+//                    List<Candle> candles = candleLIst.stream().limit(medianCount).collect(Collectors.toList());
 
                     if (BTC.concat(USDT).equals(s)) {
-                        btcPrice = candle.get(candle.size() - 1).getClose();
+                        btcPrice = candleLIst.get(candleLIst.size() - 1).getClose();
                     }
 
                     // нужно не считать последние 3 свечи
-                    double medianVolume = candles.stream()
+                    double medianVolume = candleLIst.stream()
                             .mapToDouble(Candle::getVol)
-                            .sum() / candles.size() * 2;
+                            .sum() / candleLIst.size() * 2;
 
                     Map<Double, LocalDateTime> mapVolLocalDateTime = new HashMap<>();
-//                    double vol0 = candle.get(candle.size() - 1).getVol();
-//                    mapVolLocalDateTime.put(vol0, candle.get(candle.size() - 1).getCreateDate());
-                    double vol1 = candle.get(candle.size() - 2).getVol();
-                    mapVolLocalDateTime.put(vol1, candle.get(candle.size() - 2).getCreateDate());
-//                    double vol2 = candle.get(candle.size() - 3).getVol();
-//                    mapVolLocalDateTime.put(vol2, candle.get(candle.size() - 3).getCreateDate());
+//                    double vol0 = candleLIst.get(candleLIst.size() - 1).getVol();
+//                    mapVolLocalDateTime.put(vol0, candleLIst.get(candleLIst.size() - 1).getCreateDate());
+                    Candle candle = candleLIst.get(candleLIst.size() - 2);
+                    double vol1 = candle.getVol();
+                    mapVolLocalDateTime.put(vol1, candle.getCreateDate());
+//                    double vol2 = candleLIst.get(candleLIst.size() - 3).getVol();
+//                    mapVolLocalDateTime.put(vol2, candleLIst.get(candleLIst.size() - 3).getCreateDate());
 
-                    double pr0 = candle.get(candle.size() - 2).getClose();
+                    double pr0 = candle.getClose();
                     double maxVolUsdt = vol1 * pr0;
                     double maxVol = vol1;
                     LocalDateTime forMaxVol = mapVolLocalDateTime.get(maxVol);
@@ -109,16 +117,39 @@ public class CandleService {
                     } else {
                         maxVolInUsdt = 0;
                     }
-                    int bigVol = 1000000;
+                    int bigVol = 5000;
                     boolean checkSum = maxVolInUsdt > bigVol;
 
-                    if (candle.size() >= medianCount && checkSum && medianVolume < vol1) {
+                    if (candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) {
                         List<TelegramUser> allByRoles = userService.findRoleByTrader();
                         if (!allByRoles.isEmpty()) {
-                            allByRoles.forEach(r -> senderService.send(r.getChatId(), getInfoSymbol(s, maxVolInUsdt, forMaxVol)));
+                            Set<String> symbolsList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.computeIfAbsent(
+                                    candle.getCreateDate(),
+                                    k -> new HashSet<>()
+                            );
+
+                            if (symbolsList.add(candle.getSymbol())) {
+                                String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol);
+
+                                allByRoles.forEach(r -> senderService.send(r.getChatId(), message));
+                            }
                         }
                     }
+
+//                    2025-06-10T16:05  -> 2025-06-10T16:35  2025-06-10T16:36
+                    cleanRow(candle);
+
                 });
+    }
+
+    private static void cleanRow(Candle candle) {
+        Set<LocalDateTime> setFilteredForDeleteList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.keySet().stream()
+                .filter(dateTime -> dateTime.plusMinutes(30).isBefore(candle.getCreateDate()))
+                .collect(Collectors.toSet());
+
+        setFilteredForDeleteList.forEach(dateTime -> {
+            System.out.println("deleted row: " + MAP_LOCAL_DATE_TIME_LIST_SYMBOL.remove(dateTime).size());
+        });
     }
 
     private static Integer getVolBtc(double maxVol) {
