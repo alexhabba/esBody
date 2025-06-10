@@ -117,7 +117,7 @@ public class CandleService {
                     } else {
                         maxVolInUsdt = 0;
                     }
-                    int bigVol = 5000;
+                    int bigVol = 1000000;
                     boolean checkSum = maxVolInUsdt > bigVol;
 
                     if (candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) {
