@@ -37,7 +37,8 @@ dependencies {
 //	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
 	implementation 'com.sun.mail:javax.mail:1.6.2'
 	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
 //	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.5.4'
 

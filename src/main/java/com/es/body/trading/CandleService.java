@@ -1,13 +1,13 @@
 package com.es.body.trading;
 
+import com.es.body.entity.TelegramUser;
+import com.es.body.enums.Role;
 import com.es.body.service.SenderService;
+import com.es.body.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,11 +15,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.es.body.trading.CandleApi.getCandleWithoutTicks;
-import static java.lang.Math.max;
 
 @Service
 @RequiredArgsConstructor
 public class CandleService {
+
+    private final UserService userService;
     private final BinanceSymbolsFetcher binanceSymbolsFetcher;
     private final SenderService senderService;
 
@@ -31,12 +32,12 @@ public class CandleService {
 
     private static final Map<Integer, Map<String, Integer>> map = Map.of(
             medianCountTen, Map.of(
-                    "1d", (medianCountTen + 3) * 24 * 60,
-                    "5m", (medianCountTen + 3) * 5
+                    "1d", (medianCountTen + 1) * 24 * 60,
+                    "5m", (medianCountTen + 1) * 5
             ),
             medianCountTwenty, Map.of(
-                    "1d", (medianCountTwenty + 3) * 24 * 60,
-                    "5m", (medianCountTwenty + 3) * 5
+                    "1d", (medianCountTwenty + 1) * 24 * 60,
+                    "5m", (medianCountTwenty + 1) * 5
             )
     );
 
@@ -89,28 +90,33 @@ public class CandleService {
                             .sum() / candles.size() * 2;
 
                     Map<Double, LocalDateTime> mapVolLocalDateTime = new HashMap<>();
-                    double vol0 = candle.get(candle.size() - 1).getVol();
-                    mapVolLocalDateTime.put(vol0, candle.get(candle.size() - 1).getCreateDate());
+//                    double vol0 = candle.get(candle.size() - 1).getVol();
+//                    mapVolLocalDateTime.put(vol0, candle.get(candle.size() - 1).getCreateDate());
                     double vol1 = candle.get(candle.size() - 2).getVol();
                     mapVolLocalDateTime.put(vol1, candle.get(candle.size() - 2).getCreateDate());
-                    double vol2 = candle.get(candle.size() - 3).getVol();
-                    mapVolLocalDateTime.put(vol2, candle.get(candle.size() - 3).getCreateDate());
+//                    double vol2 = candle.get(candle.size() - 3).getVol();
+//                    mapVolLocalDateTime.put(vol2, candle.get(candle.size() - 3).getCreateDate());
 
-                    double pr0 = candle.get(candle.size() - 1).getClose();
-                    double maxVol = (max(vol0, max(vol1, vol2)) * pr0);
-                    double maxVoll = (max(vol0, max(vol1, vol2)));
-                    LocalDateTime forMaxVol = mapVolLocalDateTime.get(maxVoll);
-                    int maxVolInUsdt = 0;
+                    double pr0 = candle.get(candle.size() - 2).getClose();
+                    double maxVolUsdt = vol1 * pr0;
+                    double maxVol = vol1;
+                    LocalDateTime forMaxVol = mapVolLocalDateTime.get(maxVol);
+                    int maxVolInUsdt;
                     if (s.endsWith(BTC)) {
-                        maxVolInUsdt = REZOLVER.get(BTC).apply(maxVol);
+                        maxVolInUsdt = REZOLVER.get(BTC).apply(maxVolUsdt);
                     } else if (s.endsWith(USDT)) {
-                        maxVolInUsdt = REZOLVER.get(USDT).apply(maxVol);
+                        maxVolInUsdt = REZOLVER.get(USDT).apply(maxVolUsdt);
+                    } else {
+                        maxVolInUsdt = 0;
                     }
                     int bigVol = 1000000;
                     boolean checkSum = maxVolInUsdt > bigVol;
 
-                    if (candle.size() >= medianCount && checkSum && (medianVolume < vol0 || medianVolume < vol1 || medianVolume < vol2)) {
-                        senderService.send(1466178855L, getInfoSymbol(s, maxVolInUsdt, forMaxVol));
+                    if (candle.size() >= medianCount && checkSum && medianVolume < vol1) {
+                        List<TelegramUser> allByRoles = userService.findRoleByTrader();
+                        if (!allByRoles.isEmpty()) {
+                            allByRoles.forEach(r -> senderService.send(r.getChatId(), getInfoSymbol(s, maxVolInUsdt, forMaxVol)));
+                        }
                     }
                 });
     }
@@ -135,4 +141,5 @@ public class CandleService {
 
         return symbol + "\n" + symBinance + symOkx + symBybit + maxVol + dateTime;
     }
+
 }

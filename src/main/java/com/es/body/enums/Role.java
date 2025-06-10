@@ -12,7 +12,7 @@ public enum Role {
     ADMIN_TEST,
     TEACHER_TEST,
     TEACHER_DUBNA,
-    TEACHER_MOSKOW,
+    TRADER,
     // Бухгалтер
     ACCOUNTANT,
     MANAGER;
