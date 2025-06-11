@@ -176,8 +176,8 @@ public class CandleService {
         String changeStr = "change: " + (int) change + " %\n\n";
         String maxVol = "maxVolInUsdt: " + maxVolInUsdt + "\n\n";
         String dateTime = "dateTime: " + forMaxVol + "\n\n";
-
-        return isGreen ? "\uD83D\uDFE2 " : "\uD83D\uDD34 " + symbol + "\n\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
+        String indicator = isGreen ? "\uD83D\uDFE2 " : "\uD83D\uDD34 ";
+        return  indicator + symbol + "\n\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
     }
 
 // Формула диапазона свечи в процентах
