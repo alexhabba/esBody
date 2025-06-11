@@ -27,6 +27,23 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class CommonStatementService {
 
+    // ИП БОЧКИН АЛЕКСАНДР АЛЕКСАНДРОВИЧ - делим на 3 части 1 часть на эстетику 2 на рационы 3 часть не учитываем
+    private static final String RENT = "ИП БОЧКИН АЛЕКСАНДР АЛЕКСАНДРОВИЧ";
+    private static final Set<String> SET_DESERT = Set.of(
+            "ООО \"КОНДИТЕРСНАБ\"",
+            "ООО \"ИНТЕРНЕТ РЕШЕНИЯ\""
+    );
+
+    private static final Set<String> SET_DELIVERY = Set.of(
+            "ООО \"СВИТ ЛАЙФ ФУДСЕРВИС\"",
+            "ООО \"МЕТРО КЭШ ЭНД КЕРРИ\"",
+            "ООО \"ПОЛИМЕРТАРА\""
+    );
+
+    private static final Set<String> SET_COMMON_50_50 = Set.of(
+            "ООО \"ПАКТРЕЙД\""
+    );
+
     private Map<OrgType, Pair<String, String>> MAP_RESOLVER;
     @Value("${delivery.account}")
     private String accountIdDelivery;
@@ -62,7 +79,7 @@ public class CommonStatementService {
                 .map(ResponseStatementDto.Statement::getTransactions)
                 .flatMap(Collection::stream)
                 .filter(t -> nonNull(t.getPaymentId()))
-                .peek(t -> t.setPaymentId(t.getPaymentId() + t.getCreditDebitIndicator()))
+                .peek(this::getSetPaymentId)
                 .collect(Collectors.toMap(TransactionDto::getPaymentId, x -> x));
 
         Set<String> paymentIds = mapPaymentIdTransactionDto.keySet();
@@ -92,6 +109,14 @@ public class CommonStatementService {
                 })
             );
         }
+    }
+
+    /**
+     * Тут проходят проверки и распределение финансов по организациям
+     */
+    private void getSetPaymentId(TransactionDto t) {
+//        if (t.getN)
+        t.setPaymentId(t.getPaymentId() + t.getCreditDebitIndicator());
     }
 
     private boolean isNotCommissionQr(Consumption c) {

@@ -120,7 +120,11 @@ public class CandleService {
                     int bigVol = 1000000;
                     boolean checkSum = maxVolInUsdt > bigVol;
 
-                    if (candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) {
+                    // Формула диапазона свечи в процентах
+                    // double change = (high - low) / low * 100
+                    double change = (candle.getHigh() - candle.getLow()) / candle.getLow() * 100;
+
+                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 4.13) {
                         List<TelegramUser> allByRoles = userService.findRoleByTrader();
                         if (!allByRoles.isEmpty()) {
                             Set<String> symbolsList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.computeIfAbsent(
@@ -129,7 +133,7 @@ public class CandleService {
                             );
 
                             if (symbolsList.add(candle.getSymbol())) {
-                                String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol);
+                                String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol, change);
 
                                 allByRoles.forEach(r -> senderService.send(r.getChatId(), message));
                             }
@@ -160,17 +164,21 @@ public class CandleService {
         return (int) (maxVol * 1);
     }
 
-    private String getInfoSymbol(String symbol, int maxVolInUsdt, LocalDateTime forMaxVol) {
+
+    private String getInfoSymbol(String symbol, int maxVolInUsdt, LocalDateTime forMaxVol, double change) {
         String symBinance = symbol.replace("USDT", "_USDT");
         String symOkx = symbol.replace("USDT", "-USDT");
         String symBybit = symbol;
         symBinance = "[BINANCE](https://www.binance.com/ru/trade/" + symBinance + "?type=spot)\n";
         symOkx = "[OKX](https://www.okx.com/ru/trade-spot/" + symOkx + ")\n";
         symBybit = "[BYBIT](https://www.bybit.com/trade/usdt/" + symBybit + ")\n\n";
-        String maxVol = "maxVolInUsdt: " + maxVolInUsdt + "\n";
+        String changeStr = "change: " + change + " %\n\n";
+        String maxVol = "maxVolInUsdt: " + maxVolInUsdt + "\n\n";
         String dateTime = "dateTime: " + forMaxVol + "\n\n";
 
-        return symbol + "\n" + symBinance + symOkx + symBybit + maxVol + dateTime;
+        return symbol + "\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
     }
 
+// Формула диапазона свечи в процентах
+// double change = (high - low) / low * 100 %
 }
