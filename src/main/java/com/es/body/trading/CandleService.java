@@ -133,7 +133,7 @@ public class CandleService {
                             );
 
                             if (symbolsList.add(candle.getSymbol())) {
-                                String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol, change);
+                                String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol, change, candle.getClose() > candle.getOpen());
 
                                 allByRoles.forEach(r -> senderService.send(r.getChatId(), message));
                             }
@@ -165,18 +165,19 @@ public class CandleService {
     }
 
 
-    private String getInfoSymbol(String symbol, int maxVolInUsdt, LocalDateTime forMaxVol, double change) {
+    // todo нужно добавить индикатор роста/падения
+    private String getInfoSymbol(String symbol, int maxVolInUsdt, LocalDateTime forMaxVol, double change, boolean isGreen) {
         String symBinance = symbol.replace("USDT", "_USDT");
         String symOkx = symbol.replace("USDT", "-USDT");
         String symBybit = symbol;
         symBinance = "[BINANCE](https://www.binance.com/ru/trade/" + symBinance + "?type=spot)\n";
         symOkx = "[OKX](https://www.okx.com/ru/trade-spot/" + symOkx + ")\n";
         symBybit = "[BYBIT](https://www.bybit.com/trade/usdt/" + symBybit + ")\n\n";
-        String changeStr = "change: " + change + " %\n\n";
+        String changeStr = "change: " + (int) change + " %\n\n";
         String maxVol = "maxVolInUsdt: " + maxVolInUsdt + "\n\n";
         String dateTime = "dateTime: " + forMaxVol + "\n\n";
 
-        return symbol + "\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
+        return isGreen ? "\uD83D\uDFE2 " : "\uD83D\uDD34 " + symbol + "\n\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
     }
 
 // Формула диапазона свечи в процентах
