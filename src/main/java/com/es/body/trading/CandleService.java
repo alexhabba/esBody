@@ -9,6 +9,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -58,6 +60,10 @@ public class CandleService {
             "ETHUSDT",
             "LTCUSDT",
             "XRPUSDT",
+            "USDPUSDT",
+            "BNBUSDT",
+            "SOLUSDT",
+            "BTCUSDT",
             "WBTCUSDT"
     );
 
@@ -124,7 +130,7 @@ public class CandleService {
                     // double change = (high - low) / low * 100
                     double change = (candle.getHigh() - candle.getLow()) / candle.getLow() * 100;
 
-                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 4.13) {
+                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 2.13) {
                         List<TelegramUser> allByRoles = userService.findRoleByTrader();
                         if (!allByRoles.isEmpty()) {
                             Set<String> symbolsList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.computeIfAbsent(
@@ -173,13 +179,27 @@ public class CandleService {
         symBinance = "[BINANCE](https://www.binance.com/ru/trade/" + symBinance + "?type=spot)\n";
         symOkx = "[OKX](https://www.okx.com/ru/trade-spot/" + symOkx + ")\n";
         symBybit = "[BYBIT](https://www.bybit.com/trade/usdt/" + symBybit + ")\n\n";
-        String changeStr = "change: " + (int) change + " %\n\n";
-        String maxVol = "maxVolInUsdt: " + maxVolInUsdt + "\n\n";
+        String changeStr = "change: " + roundWithDecimalFormat(change) + " %\n\n";
+        String maxVol = "maxVolInUsdt: " + formatWithSpaces(maxVolInUsdt) + "\n\n";
         String dateTime = "dateTime: " + forMaxVol + "\n\n";
         String indicator = isGreen ? "\uD83D\uDFE2 " : "\uD83D\uDD34 ";
         return  indicator + symbol + "\n\n" + symBinance + symOkx + symBybit + changeStr + maxVol + dateTime;
     }
 
+    public static double roundWithDecimalFormat(double value) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.parseDouble(df.format(value));
+    }
+
+    public static String formatWithSpaces(long number) {
+        DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+        formatter.setGroupingSize(3);
+        formatter.setGroupingUsed(true);
+        DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
+        symbols.setGroupingSeparator(' '); // Устанавливаем пробел как разделитель
+        formatter.setDecimalFormatSymbols(symbols);
+        return formatter.format(number);
+    }
 // Формула диапазона свечи в процентах
 // double change = (high - low) / low * 100 %
 }
