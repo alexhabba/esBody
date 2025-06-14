@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.es.body.trading.CandleApi.getCandleWithoutTicks;
-import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +63,7 @@ public class CandleService {
             "BNBUSDT",
             "SOLUSDT",
             "BTCUSDT",
+            "BTTCUSDT",
             "WBTCUSDT"
     );
 
@@ -100,7 +100,7 @@ public class CandleService {
                     // нужно не считать последние 3 свечи
                     double medianVolume = candleLIst.stream()
                             .mapToDouble(Candle::getVol)
-                            .sum() / candleLIst.size() * 2;
+                            .sum() / candleLIst.size() * 3;
 
                     Map<Double, LocalDateTime> mapVolLocalDateTime = new HashMap<>();
 //                    double vol0 = candleLIst.get(candleLIst.size() - 1).getVol();
@@ -130,7 +130,7 @@ public class CandleService {
                     // double change = (high - low) / low * 100
                     double change = (candle.getHigh() - candle.getLow()) / candle.getLow() * 100;
 
-                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 2.13) {
+                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 4) {
                         List<TelegramUser> allByRoles = userService.findRoleByTrader();
                         if (!allByRoles.isEmpty()) {
                             Set<String> symbolsList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.computeIfAbsent(
