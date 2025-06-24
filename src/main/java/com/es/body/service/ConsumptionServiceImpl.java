@@ -91,7 +91,24 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
 
     @Override
     public List<Consumption> getConsumptionByDateTime(LocalDateTime dateTime) {
-        return repository.getConsumptionByDateTime(dateTime);
+        List<Consumption> consumptionByDateTime = repository.getConsumptionByDateTime(dateTime);
+
+        // получаем множество PaymentId где кол-во больше 1 и исключаем из отчета
+        Set<String> paymentIdsWhereCountMoreOne = consumptionByDateTime.stream()
+                .collect(Collectors.groupingBy(
+                        Consumption::getPaymentId,
+                        Collectors.counting()
+                ))
+                .entrySet().stream()  // Преобразуем Map в Stream<Map.Entry>
+                .filter(entry -> entry.getValue() > 1)  // Оставляем только count > 1
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,  // Ключ остаётся тем же (paymentId)
+                        Map.Entry::getValue  // Значение остаётся тем же (count)
+                )).keySet();
+
+        return consumptionByDateTime.stream()
+                .filter(c -> !paymentIdsWhereCountMoreOne.contains(c.getPaymentId()))
+                .collect(Collectors.toList());
     }
 
     @NotNull

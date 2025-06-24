@@ -26,5 +26,10 @@ public class QrServiceImpl implements QrService {
     public void updateQrStatuses(List<String> qrsIdList, LocalDateTime dateTime ) {
         qrRepository.updateStatuses(qrsIdList, dateTime);
     }
+
+    @Override
+    public Integer getAmountSumToDay(LocalDateTime dateTime) {
+        return qrRepository.getAmountSumToDay(dateTime);
+    }
 }
 

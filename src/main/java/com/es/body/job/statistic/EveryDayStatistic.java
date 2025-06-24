@@ -3,6 +3,7 @@ package com.es.body.job.statistic;
 import com.es.body.entity.Consumption;
 import com.es.body.repository.UserRepository;
 import com.es.body.service.ConsumptionService;
+import com.es.body.service.QrService;
 import com.es.body.service.SenderService;
 import com.es.body.service.StatisticService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class EveryDayStatistic {
     private final SenderService senderService;
     private final ConsumptionService consumptionService;
     private final StatisticService statisticService;
+    private final QrService qrService;
 
     @Scheduled(cron = "${cron.job.statisticDay}")
 //    @Scheduled(fixedDelay = 1000)
@@ -37,5 +39,10 @@ public class EveryDayStatistic {
                 senderService.send(user.getChatId(), infoStatistic);
             });
         }
+
+        Integer amountSumToDayOnlyQr = qrService.getAmountSumToDay(dateTimeDay);
+        userRepository.findAllByRoles(List.of(MANAGER)).forEach(user ->
+                senderService.send(user.getChatId(), "\uD83D\uDFE2 Приход сегодня " + (nonNull(amountSumToDayOnlyQr) ? amountSumToDayOnlyQr : 0))
+        );
     }
 }

@@ -1,5 +1,6 @@
 package com.es.body.trading;
 
+import com.es.body.trading.entity.Candle;
 import org.json.JSONArray;
 
 import java.time.Instant;
@@ -10,26 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.es.body.statement.Utils.getResponse;
+import static java.util.Objects.isNull;
 
 public class CandleApi {
 
-
-
-    public static List<Candle> getCandleWithoutTicks(String symbol, LocalDateTime startDateTime, String interval) {
+    public static List<Candle> getCandleWithoutTicks(String symbol, LocalDateTime startDateTime, String interval, Integer limit) {
 //        String interval = "5m"; // 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M
         long startTime = startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli(); // Начальное время в миллисекундах (Unix timestamp)
 //        long startTime = LocalDateTime.parse("2025-05-30T05:15:00").toInstant(ZoneOffset.UTC).toEpochMilli(); // Начальное время в миллисекундах (Unix timestamp)
 //        long endTime = LocalDateTime.parse("2025-05-30T06:15:00").toInstant(ZoneOffset.UTC).toEpochMilli(); // Начальное время в миллисекундах (Unix timestamp)
-        int limit = 1000;
-
 
 //        String url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&startTime=%d&endTime=%d&limit=%d",
 //                symbol,
 //                interval, startTime, endTime, limit);
 //        String url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&startTime=%d&endTime=%d&limit=%d",
-        String url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=%d&startTime=%d",
-                symbol,
-                interval, limit, startTime);
+        String url;
+        if (isNull(limit)) {
+            url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&startTime=%d",
+                    symbol,
+                    interval, startTime);
+        } else {
+            url = String.format("https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=%d",
+                    symbol,
+                    interval, limit);
+        }
 
         String response = getResponse(url, 3);
         List<Candle> candels = new ArrayList<>(1000);
@@ -52,9 +57,8 @@ public class CandleApi {
                             .interval(5)
                             .symbol(symbol)
                             .build();
-                        candels.add(c);
+                    candels.add(c);
                 }
-
             } catch (Exception e) {
                 System.out.println("Error parsing response: " + e.getMessage());
             }

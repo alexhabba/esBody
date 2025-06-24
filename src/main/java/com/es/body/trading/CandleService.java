@@ -1,9 +1,10 @@
 package com.es.body.trading;
 
 import com.es.body.entity.TelegramUser;
-import com.es.body.enums.Role;
 import com.es.body.service.SenderService;
 import com.es.body.service.UserService;
+import com.es.body.trading.entity.Candle;
+import com.es.body.trading.repository.CandleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -76,7 +77,7 @@ public class CandleService {
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() {
-        List<String> usdt = binanceSymbolsFetcher.getAllSymboll("USDT");
+        List<String> usdt = binanceSymbolsFetcher.getAllSymbol("USDT");
         symbols.addAll(usdt);
     }
 
@@ -90,7 +91,7 @@ public class CandleService {
                 .filter(sym -> !setSymbolExcludes.contains(sym))
                 .forEach(s -> {
 
-                    List<Candle> candleLIst = getCandleWithoutTicks(s, LocalDateTime.now().minusHours(3).minusMinutes(minutes), interval);
+                    List<Candle> candleLIst = getCandleWithoutTicks(s, LocalDateTime.now().minusHours(3).minusMinutes(minutes), interval, null);
 //                    List<Candle> candles = candleLIst.stream().limit(medianCount).collect(Collectors.toList());
 
                     if (BTC.concat(USDT).equals(s)) {
