@@ -50,7 +50,7 @@ public class Utils {
     }
 
     @SneakyThrows
-    public static String getResponse(Request request, int count) {
+    public synchronized static String getResponse(Request request, int count) {
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -83,7 +83,7 @@ public class Utils {
     }
 
     @SneakyThrows
-    public static String postResponse(Request request, int count) {
+    public synchronized static String postResponse(Request request, int count) {
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
