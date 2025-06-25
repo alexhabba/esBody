@@ -15,6 +15,15 @@ public class SenderService {
 
     @SneakyThrows
     public void send(Long chatId, String textMessage) {
+        AbsSender bean = applicationContext.getBean(AbsSender.class);
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(textMessage);
+        bean.execute(message);
+    }
+
+    @SneakyThrows
+    public void sendForUrl(Long chatId, String textMessage, String mark) {
         textMessage = textMessage.replace(".", "\\.");
         textMessage = textMessage.replace("-", "\\-");
         AbsSender bean = applicationContext.getBean(AbsSender.class);

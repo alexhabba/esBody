@@ -8,6 +8,12 @@ spring:
     hibernate:
       ddl-auto: validate
     database: postgresql
+
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Europe/Moscow
+
   datasource:
 #    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}?currentSchema=es_body
     url: jdbc:postgresql://${RDS_HOSTNAME:45.8.251.166}:${RDS_PORT:5433}/${RDS_DB_NAME:postgres}?currentSchema=es_body

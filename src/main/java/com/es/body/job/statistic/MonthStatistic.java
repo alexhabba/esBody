@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.es.body.enums.Role.*;
-import static com.es.body.enums.StatisticType.MEDIAN_MONTH;
 import static com.es.body.enums.StatisticType.MONTH;
 import static java.util.Objects.nonNull;
 

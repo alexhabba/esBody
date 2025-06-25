@@ -96,7 +96,7 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
         // получаем множество PaymentId где кол-во больше 1 и исключаем из отчета
         Set<String> paymentIdsWhereCountMoreOne = consumptionByDateTime.stream()
                 .collect(Collectors.groupingBy(
-                        Consumption::getPaymentId,
+                        Consumption::getTransactionId,
                         Collectors.counting()
                 ))
                 .entrySet().stream()  // Преобразуем Map в Stream<Map.Entry>
@@ -107,7 +107,7 @@ public class ConsumptionServiceImpl implements ConsumptionService, HandlerMessag
                 )).keySet();
 
         return consumptionByDateTime.stream()
-                .filter(c -> !paymentIdsWhereCountMoreOne.contains(c.getPaymentId()))
+                .filter(c -> !paymentIdsWhereCountMoreOne.contains(c.getTransactionId()))
                 .collect(Collectors.toList());
     }
 

@@ -61,6 +61,7 @@ public class FractalJob {
             getAndSaveFractal(s, interval, new ArrayList<>(window), count);
         }
     }
+
     @Scheduled(cron = "0 */15 * * * *")  // Запуск каждые 15 минут
     public void executeEveryFifteenMinutes() {
         int count = 27;
@@ -76,13 +77,13 @@ public class FractalJob {
         symbols.forEach(symbol -> this.getAndSaveFractal(symbol, "1h", count));
     }
 
-        @Scheduled(cron = "0 0 */4 * * *")
-    public void executeFourHour() {
-        int count = 27;
-        List<String> symbols = binanceSymbolsFetcher.getAllSymbol("USDT");
-
-        symbols.forEach(symbol -> this.getAndSaveFractal(symbol, "4h", count));
-    }
+//        @Scheduled(cron = "0 0 */4 * * *")
+//    public void executeFourHour() {
+//        int count = 27;
+//        List<String> symbols = binanceSymbolsFetcher.getAllSymbol("USDT");
+//
+//        symbols.forEach(symbol -> this.getAndSaveFractal(symbol, "4h", count));
+//    }
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void executeDay() {

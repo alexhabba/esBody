@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import static com.es.body.bot.TelegramBot.YOU_HAVE_NOT_RIGHTS;
 import static com.es.body.constnt.Constant.ADD_NEW_CLIENT;

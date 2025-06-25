@@ -131,7 +131,9 @@ public class CandleService {
                     // double change = (high - low) / low * 100
                     double change = (candle.getHigh() - candle.getLow()) / candle.getLow() * 100;
 
-                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 4) {
+//                    if ((candleLIst.size() >= medianCount && checkSum && medianVolume < vol1) || change > 3) {
+                    // тестируем пока изменения больше чем на 3 процента
+                    if (change > 3) {
                         List<TelegramUser> allByRoles = userService.findRoleByTrader();
                         if (!allByRoles.isEmpty()) {
                             Set<String> symbolsList = MAP_LOCAL_DATE_TIME_LIST_SYMBOL.computeIfAbsent(
@@ -142,7 +144,7 @@ public class CandleService {
                             if (symbolsList.add(candle.getSymbol())) {
                                 String message = getInfoSymbol(s, maxVolInUsdt, forMaxVol, change, candle.getClose() > candle.getOpen());
 
-                                allByRoles.forEach(r -> senderService.send(r.getChatId(), message));
+                                allByRoles.forEach(r -> senderService.sendForUrl(r.getChatId(), message, "marker"));
                             }
                         }
                     }
