@@ -4,6 +4,7 @@ import com.es.body.entity.Consumption;
 import com.es.body.enums.OrgType;
 import com.es.body.enums.StatisticType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import static com.es.body.enums.CreditDebitIndicator.Debit;
 import static com.es.body.enums.OrgType.DELIVERY;
 import static com.es.body.enums.OrgType.DESERT;
 import static com.es.body.enums.StatisticType.*;
+import static com.es.body.trading.CandleService.formatWithSpaces;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -23,12 +25,26 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class StatisticService {
 
+    @Value("${delivery.account}")
+    private String accountIdDelivery;
+
+    @Value("${delivery.token}")
+    private String tokenDelivery;
+
+    @Value("${desert.account}")
+    private String accountIdDesert;
+
+    @Value("${desert.token}")
+    private String tokenDesert;
+
     private static final Map<StatisticType, String> MAP_STATISTIC_TYPE_DESCRIPTION =
             Map.of(
                     DAY, "Ежедневный отчет.\n",
                     MEDIAN_MONTH, "Отчет за пол месяца.\n",
                     MONTH, "Отчет за месяц.\n"
             );
+
+    private final BalanceInfoService balanceInfoService;
 
     public String getInfoStatistic(List<Consumption> consumptions, StatisticType statisticType) {
         if (isNull(consumptions) || consumptions.isEmpty()) {
@@ -68,15 +84,20 @@ public class StatisticService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
-        String descriptinMain = MAP_STATISTIC_TYPE_DESCRIPTION.get(statisticType);
+        String descriptionMain = MAP_STATISTIC_TYPE_DESCRIPTION.get(statisticType);
         String everyStatement =
-                descriptinMain +
+                descriptionMain +
                         "\uD83D\uDFE2 Приход\n" +
-                        "«Рационы» " + creditDeliverySum.intValue() + "\n" +
-                        "«Десерты» " + creditDesertSum.intValue() + "\n" +
+                        "«Рационы» " + formatWithSpaces(creditDeliverySum.intValue()) + "\n" +
+                        "«Десерты» " + formatWithSpaces(creditDesertSum.intValue()) + "\n\n" +
+
                         "\uD83D\uDD34 Расход\n" +
-                        "«Рационы» " + debitDeliverySum.intValue() + "\n" +
-                        "«Десерты» " + debitDesertSum.intValue() + "\n";
+                        "«Рационы» " + formatWithSpaces(debitDeliverySum.intValue()) + "\n" +
+                        "«Десерты» " + formatWithSpaces(debitDesertSum.intValue()) + "\n\n" +
+
+                        "\uD83D\uDCAA Остаток на счетах\n" +
+                        "«Рационы» " + formatWithSpaces(Double.doubleToLongBits(balanceInfoService.getBalance(accountIdDelivery, tokenDelivery))) + "\n" +
+                        "«Десерты» " + formatWithSpaces(Double.doubleToLongBits(balanceInfoService.getBalance(accountIdDesert, tokenDesert))) + "\n\n";
 
         return everyStatement;
     }

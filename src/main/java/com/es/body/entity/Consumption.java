@@ -72,6 +72,8 @@ public class Consumption {
                 (orgType == OrgType.DELIVERY ? " \"Рационы\"\n" : " \"Десерты\"\n") + desc;
     }
 
+
+
 //    public String everyDayStatement() {
 //        double debitDeliverySum = 0;
 //        double debitDesertSum = 0;

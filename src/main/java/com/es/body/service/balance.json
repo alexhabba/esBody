@@ -1,0 +1,42 @@
+{
+  "Data": {
+    "Balance": [
+      {
+        "accountId": "40702810320000187916/044525104",
+        "creditDebitIndicator": "Debit",
+        "type": "OpeningAvailable",
+        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "Amount": {
+          "amount": 13831.62,
+          "currency": "RUB"
+        }
+      },
+      {
+        "accountId": "40702810320000187916/044525104",
+        "creditDebitIndicator": "Debit",
+        "type": "ClosingAvailable",
+        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "Amount": {
+          "amount": 13831.62,
+          "currency": "RUB"
+        }
+      },
+      {
+        "accountId": "40702810320000187916/044525104",
+        "creditDebitIndicator": "Debit",
+        "type": "Expected",
+        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "Amount": {
+          "amount": 0.0,
+          "currency": "RUB"
+        }
+      }
+    ]
+  },
+  "Links": {
+    "self": "https://enter.tochka.com/uapi/open-banking/v1.0/accounts/40702810320000187916/044525104/balances"
+  },
+  "Meta": {
+    "totalPages": 1
+  }
+}
