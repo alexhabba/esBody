@@ -28,11 +28,12 @@ public class BalanceInfoService {
                 .addHeader("Authorization", token)
                 .build();
         String response = getResponse(request, 3);
-        return objectMapper.readValue(response, BalanceResponse.class).getData().getBalance()
+        Double balance = objectMapper.readValue(response, BalanceResponse.class).getData().getBalance()
                 .stream()
                 .filter(b -> "OpeningAvailable".equals(b.getType()))
                 .map(BalanceResponse.Balance::getAmount)
                 .map(BalanceResponse.Balance.Amount::getAmount)
                 .findAny().get();
+        return balance;
     }
 }

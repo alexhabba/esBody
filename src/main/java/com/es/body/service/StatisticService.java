@@ -96,8 +96,8 @@ public class StatisticService {
                         "«Десерты» " + formatWithSpaces(debitDesertSum.intValue()) + "\n\n" +
 
                         "\uD83D\uDCAA Остаток на счетах\n" +
-                        "«Рационы» " + formatWithSpaces(Double.doubleToLongBits(balanceInfoService.getBalance(accountIdDelivery, tokenDelivery))) + "\n" +
-                        "«Десерты» " + formatWithSpaces(Double.doubleToLongBits(balanceInfoService.getBalance(accountIdDesert, tokenDesert))) + "\n\n";
+                        "«Рационы» " + formatWithSpaces((long) balanceInfoService.getBalance(accountIdDelivery, tokenDelivery)) + "\n" +
+                        "«Десерты» " + formatWithSpaces((long) balanceInfoService.getBalance(accountIdDesert, tokenDesert)) + "\n\n";
 
         return everyStatement;
     }

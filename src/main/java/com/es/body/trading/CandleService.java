@@ -5,6 +5,7 @@ import com.es.body.service.SenderService;
 import com.es.body.service.UserService;
 import com.es.body.trading.entity.Candle;
 import com.es.body.trading.repository.CandleRepository;
+import com.es.body.trading.service.FractalD1Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -23,7 +24,7 @@ import static com.es.body.trading.CandleApi.getCandleWithoutTicks;
 @RequiredArgsConstructor
 public class CandleService {
 
-    private final CandleRepository candleRepository;
+    private final FractalD1Notification fractalD1Notification;
     private final UserService userService;
     private final BinanceSymbolsFetcher binanceSymbolsFetcher;
     private final SenderService senderService;
@@ -65,6 +66,7 @@ public class CandleService {
             "SOLUSDT",
             "BTCUSDT",
             "BTTCUSDT",
+            "TUSDUSDT",
             "WBTCUSDT"
     );
 
@@ -93,6 +95,8 @@ public class CandleService {
 
                     List<Candle> candleLIst = getCandleWithoutTicks(s, LocalDateTime.now().minusHours(3).minusMinutes(minutes), interval, null);
 //                    List<Candle> candles = candleLIst.stream().limit(medianCount).collect(Collectors.toList());
+
+//                    fractalD1Notification.checkFractal(candleLIst.get(candleLIst.size() - 1));
 
                     if (BTC.concat(USDT).equals(s)) {
                         btcPrice = candleLIst.get(candleLIst.size() - 1).getClose();
