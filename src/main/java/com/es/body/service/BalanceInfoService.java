@@ -30,7 +30,7 @@ public class BalanceInfoService {
         String response = getResponse(request, 3);
         Double balance = objectMapper.readValue(response, BalanceResponse.class).getData().getBalance()
                 .stream()
-                .filter(b -> "OpeningAvailable".equals(b.getType()))
+                .filter(b -> "ClosingAvailable".equals(b.getType()))
                 .map(BalanceResponse.Balance::getAmount)
                 .map(BalanceResponse.Balance.Amount::getAmount)
                 .findAny().get();

@@ -5,9 +5,9 @@
         "accountId": "40702810320000187916/044525104",
         "creditDebitIndicator": "Debit",
         "type": "OpeningAvailable",
-        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "dateTime": "2025-07-25T09:18:30.065474+00:00",
         "Amount": {
-          "amount": 13831.62,
+          "amount": 31540.34,
           "currency": "RUB"
         }
       },
@@ -15,9 +15,9 @@
         "accountId": "40702810320000187916/044525104",
         "creditDebitIndicator": "Debit",
         "type": "ClosingAvailable",
-        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "dateTime": "2025-07-25T09:18:30.065474+00:00",
         "Amount": {
-          "amount": 13831.62,
+          "amount": 21820.0,
           "currency": "RUB"
         }
       },
@@ -25,9 +25,9 @@
         "accountId": "40702810320000187916/044525104",
         "creditDebitIndicator": "Debit",
         "type": "Expected",
-        "dateTime": "2025-06-28T08:44:28.454733+00:00",
+        "dateTime": "2025-07-25T09:18:30.065474+00:00",
         "Amount": {
-          "amount": 0.0,
+          "amount": 9720.34,
           "currency": "RUB"
         }
       }
