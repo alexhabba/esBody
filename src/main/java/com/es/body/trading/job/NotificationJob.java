@@ -22,7 +22,7 @@ public class NotificationJob {
     private final ObjectMapper objectMapper;
     private final SenderService senderService;
 
-    @Scheduled(cron = "13 * */3 * * *")
+    @Scheduled(cron = "* * */3 * * *")
     public void executeJob() {
         showPositionAndBalance();
     }
