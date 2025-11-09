@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,7 +87,7 @@ public class StatisticService {
 
         String descriptionMain = MAP_STATISTIC_TYPE_DESCRIPTION.get(statisticType);
         String everyStatement =
-                descriptionMain +
+                descriptionMain + " " + LocalDate.now() +
                         "\uD83D\uDFE2 Приход\n" +
                         "«Рационы» " + formatWithSpaces(creditDeliverySum.intValue()) + "\n" +
                         "«Десерты» " + formatWithSpaces(creditDesertSum.intValue()) + "\n\n" +

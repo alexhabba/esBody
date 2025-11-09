@@ -31,7 +31,8 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 public class Consumption {
 
-    public static final String COMMISSION_ON_QR = "Комиссия за зачисление перевода по QR";
+//    public static final String COMMISSION_ON_QR = "Комиссия за зачисление перевода по QR";
+    public static final String COMMISSION_ON_QR = "Комиссия за осуществление переводов денежных средств через сервис «Система быстрых платежей С2В";
     private static final String PAYMENT = "Зачисление по QR";
     public static final String PYATEROCHKA = "PYATEROCHKA";
     public static final String BUY = "Покупка";
